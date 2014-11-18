@@ -11,6 +11,8 @@
 
   :profiles {:dev {:dependencies [[speclj "3.1.0"]]}}
 
+  :hooks [leiningen.cljsbuild]
+
   :cljsbuild {:builds        {:dev  {:source-paths   ["src/cljs" "spec/cljs"]
                                      :compiler       {:output-to "target/main/compiled.js"}
                                      :notify-command ["phantomjs" "bin/speclj" "path/to/compiled.js"]}
