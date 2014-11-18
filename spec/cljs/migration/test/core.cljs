@@ -57,7 +57,7 @@
               ;"user": "ovation://entities/e7bf5920-4b3d-0132-5d38-22000a0b96d9",
               ;"entity": "ovation://entities/49754fa6-df69-452e-8808-24e7d12c5bf6"
               (should= (let [doc (keywordize-keys (js->clj tag-annotation))]
-                         {"_id"             (str "keywords_" (:_id doc)) ;;TODO
+                         {"_id"             (str "keywords_" (:_id doc))
                           "_rev"            (:_rev doc)
                           "annotation"      {"tag" (:tag doc)}
                           "links"           {"_collaboration_roots" (:experimentIds doc)}
@@ -85,7 +85,7 @@
                 ;                                  ,
                 ;"user": "ovation://entities/eae74740-5a98-0131-372a-22000a977b96"
 
-                (should= {"_id"             (str "properties_" (:_id doc)) ;;TODO
+                (should= {"_id"             (str "properties_" (:_id doc))
                           "_rev"            (:_rev doc)
                           "annotation"      {"key"   (:key doc)
                                              "value" (:value doc)}
