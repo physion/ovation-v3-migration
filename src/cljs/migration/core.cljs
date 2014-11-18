@@ -6,12 +6,9 @@
   [id]
   (str "ovation://entities/" id))
 
-
-;; TODO defmulti for :type
-
 (def collaboration-roots "_collaboration_roots")
 
-(defn convert-annotation
+(defn convert-annotation-base
   [doc]
   {
    "_rev"   (:_rev doc)
@@ -26,8 +23,19 @@
   "Converts an annotation document"
   [doc-v2]
 
-  (let [doc (clojure.walk/keywordize-keys doc-v2)
-        base (convert-annotation doc)]
+  (let [base (convert-annotation-base doc-v2)]
     (assoc base
-      "_id"        (str "keywords_" (:_id doc))
-      "annotation" {"tag" (:tag doc)})))
+      "_id"        (str "keywords_" (:_id doc-v2))
+      "annotation_type" "keywords"
+      "annotation" {"tag" (:tag doc-v2)})))
+
+
+(defmulti convert-annotation :type)
+(defmethod convert-annotation "TagAnnotation"
+  [doc-v2]
+  (convert-keyword-document doc-v2))
+
+
+(defmulti convert :entity)
+(defmethod convert false [annotation-doc]
+  (convert-annotation annotation-doc))

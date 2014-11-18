@@ -43,9 +43,12 @@
                 "annotation" {"tag" (:tag doc)}
                 "links" {"_collaboration_roots" (:experimentIds doc)}
                 "type" "Annotation"
+                "annotation_type" "keywords"
                 "user" (m/make-entity-uri (:userId doc))
                 "entity" (m/make-entity-uri (:entityId doc))})
-      (m/convert-keyword-document (js->clj tag-annotation)))))
+      (m/convert (clojure.walk/keywordize-keys (js->clj tag-annotation)))))
+  (it "should convert property document"
+      (should false)))
 
 
 (describe "Entity URI creation"
