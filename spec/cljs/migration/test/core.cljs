@@ -35,7 +35,7 @@
 ;"entity": "ovation://entities/49754fa6-df69-452e-8808-24e7d12c5bf6"
 
 (describe "Annotation document conversion"
-  (it "should convert tag document"
+  (it "should convert keyword document"
     (should= (let [doc (clojure.walk/keywordize-keys (js->clj tag-annotation))
                    entity-id (:entityId doc)]
                {"_id" (str "keywords_" (:_id doc))           ;;TODO
@@ -47,4 +47,9 @@
                 "entity" (m/make-entity-uri (:entityId doc))})
       (m/convert-keyword-document (js->clj tag-annotation)))))
 
+
+(describe "Entity URI creation"
+          (it "should prepend ovation://entities/"
+              (let [id "123-abc-def-789"]
+                (should= (str "ovation://entities/" id) (m/make-entity-uri id)))))
 (run-specs)

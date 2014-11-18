@@ -15,9 +15,9 @@
 
   :cljsbuild {:builds        {:dev  {:source-paths   ["src/cljs" "spec/cljs"]
                                      :compiler       {:output-to "target/main/compiled.js"}
-                                     :notify-command ["phantomjs" "bin/speclj" "target/main/compiled.js"]}
+                                     :notify-command ["node_modules/phantomjs/lib/phantom/bin/phantomjs" "bin/speclj" "target/main/compiled.js"]}
                               :prod {:source-paths ["src/cljs"]
                                      :compiler     {:output-to     "target/matin/prod.js"
                                                     :optimizations :simple}}}
-              :test-commands {"test" ["phantomjs" "bin/speclj" "target/main/compiled.js"]}}
+              :test-commands {"test" ["node_modules/phantomjs/lib/phantom/bin/phantomjs" "bin/speclj" "target/main/compiled.js"]}}
   )
