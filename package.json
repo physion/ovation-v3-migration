@@ -1,0 +1,22 @@
+{
+  "name": "ovation-v3-migration",
+  "version": "1.0.0",
+  "description": "ovation-v3-migration ====================",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/physion/ovation-v3-migration.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/physion/ovation-v3-migration/issues"
+  },
+  "homepage": "https://github.com/physion/ovation-v3-migration",
+  "dependencies": {
+    "phantomjs": "^1.9.12"
+  }
+}
