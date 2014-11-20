@@ -15,6 +15,10 @@
    "api_version" "3"
    })
 
+(defn deep-merge
+  [base doc]
+  (merge-with merge base doc))
+
 (defn add-timeline-element
   [doc-v2 doc]
   (let [start {"start"      (:start doc-v2)
@@ -23,7 +27,12 @@
                      (conj start {"end"      (:end doc-v2)
                                   "end_zone" (:endZone doc-v2)})
                      start)]
-    (merge-with merge doc {"attributes" attributes})))
+    (deep-merge doc {"attributes" attributes})))
+
+(defn add-procedure-element
+  [doc-v2 doc]
+  (deep-merge doc {"attributes" {"protocol_parameters" (util/map-from-key-value-map-seq (:protocolParameters doc-v2))
+                                 "device_parameters" (util/map-from-key-value-map-seq (:deviceParameters doc-v2))}}))
 
 (defmulti convert-entity :type)
 (defmethod convert-entity "Project"

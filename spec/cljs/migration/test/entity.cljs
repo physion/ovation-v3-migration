@@ -70,8 +70,13 @@
                                    "value" "00c66b67-1126-4cc0-af05-fd4ad188567f"}
                                   ],
             "outputSources"      [],
-            "protocolParameters" [],
-            "deviceParameters"   [],
+            "protocolParameters" [{"key"   "injectionDate",
+                                   "value" "20130709"},
+                                  {"key"   "infectionCoordinates",
+                                   "value" "[[2.500, -1.500, .500], [2.500, -1.500, .8]]"}],
+            "deviceParameters"   [{"key"   "version",
+                                   "value" "20130709"},
+                                  ],
             "projectIds"         [
                                   "9c7066a8-4f22-42d9-82fe-43fec312fab2"
                                   ],
@@ -129,10 +134,25 @@
                          (m/add-timeline-element doc base)))))
 
 (describe "Procedure element conversion"
-          (it "should convert protocol parameters")
-          (it "should convert device parameters")
+          (it "should convert protocol and device parameters"
+              (let [doc (keywordize-keys epoch)]
+                (should= {"attributes" {"protocol_parameters" (util/map-from-key-value-map-seq (:protocolParameters doc))
+                                        "device_parameters" (util/map-from-key-value-map-seq (:deviceParameters doc))}}
+                         (m/add-procedure-element doc {}))))
+          (it "should allow have empty parameters"
+              (let [doc (keywordize-keys epoch)
+                    no-params (assoc doc :protocolParameters [] :deviceParameters [])]
+                (should= {"attributes" {"protocol_parameters" {}
+                                        "device_parameters" {}}}
+                         (m/add-procedure-element no-params {}))))
           (it "should add protocol link"))
 
-(describe "Procedure element conversion")
+
+(describe "Key-value entry seq to map"
+          (it "should make a map from key-value record"
+              (should= {"key1" "value1"
+                        "key2" "value2"}
+                       (util/map-from-key-value-map-seq '({:key "key1" :value "value1"} {:key "key2" :value "value2"})))))
+
 
 (run-specs)
