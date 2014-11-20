@@ -114,7 +114,7 @@
                           "api_version"     "3"
                           "user"            (util/make-entity-uri (:userId doc))
                           "entity"          (util/make-entity-uri (:entityId doc))})
-                       (m/convert (keywordize-keys (js->clj tag-annotation)))))
+                       (first (m/convert (keywordize-keys (js->clj tag-annotation))))))
 
           (it "should convert property document"
               (let [doc (keywordize-keys (js->clj property-annotation))]
@@ -144,7 +144,7 @@
                           "api_version"     "3"
                           "user"            (util/make-entity-uri (:userId doc))
                           "entity"          (util/make-entity-uri (:entityId doc))}
-                         (m/convert (keywordize-keys (js->clj property-annotation))))))
+                         (first (m/convert (keywordize-keys (js->clj property-annotation)))))))
 
           (it "should convert note annotation"
               (let [doc (keywordize-keys (js->clj note-annotation))]
@@ -158,23 +158,23 @@
                           "api_version"     "3"
                           "user"            (util/make-entity-uri (:userId doc))
                           "entity"          (util/make-entity-uri (:entityId doc))}
-                         (m/convert (keywordize-keys (js->clj note-annotation))))))
+                         (first (m/convert (keywordize-keys (js->clj note-annotation)))))))
 
-          (it "should convert timeline annotaiton"
+          (it "should convert timeline annotation"
               (let [doc (keywordize-keys (js->clj timeline-annotation))]
                 (should= {"_id"             (str "timeline_events_" (:_id doc))
-                          "_rev"            (:_rev doc)
-                          "annotation"      {"name"  (:name doc)
-                                             "notes" (:notes doc)
-                                             "start" (:start doc)
-                                             "end"   (:end doc)}
-                          "links"           {"_collaboration_roots" (:experimentIds doc)}
-                          "type"            "Annotation"
-                          "annotation_type" "timeline_events"
-                          "api_version"     "3"
-                          "user"            (util/make-entity-uri (:userId doc))
-                          "entity"          (util/make-entity-uri (:entityId doc))}
-                         (m/convert (keywordize-keys (js->clj timeline-annotation))))))
+                                  "_rev"            (:_rev doc)
+                                  "annotation"      {"name"  (:name doc)
+                                                     "notes" (:notes doc)
+                                                     "start" (:start doc)
+                                                     "end"   (:end doc)}
+                                  "links"           {"_collaboration_roots" (:experimentIds doc)}
+                                  "type"            "Annotation"
+                                  "annotation_type" "timeline_events"
+                                  "api_version"     "3"
+                                  "user"            (util/make-entity-uri (:userId doc))
+                                  "entity"          (util/make-entity-uri (:entityId doc))}
+                         (first (m/convert (keywordize-keys (js->clj timeline-annotation)))))))
           )
 
 
@@ -182,4 +182,3 @@
           (it "should prepend ovation://entities/"
               (let [id "123-abc-def-789"]
                 (should= (str "ovation://entities/" id) (util/make-entity-uri id)))))
-(run-specs)

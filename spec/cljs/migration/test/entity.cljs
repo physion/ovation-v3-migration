@@ -137,15 +137,27 @@
           (it "should convert protocol and device parameters"
               (let [doc (keywordize-keys epoch)]
                 (should= {"attributes" {"protocol_parameters" (util/map-from-key-value-map-seq (:protocolParameters doc))
-                                        "device_parameters" (util/map-from-key-value-map-seq (:deviceParameters doc))}}
+                                        "device_parameters"   (util/map-from-key-value-map-seq (:deviceParameters doc))}}
                          (m/add-procedure-element doc {}))))
           (it "should allow have empty parameters"
               (let [doc (keywordize-keys epoch)
                     no-params (assoc doc :protocolParameters [] :deviceParameters [])]
                 (should= {"attributes" {"protocol_parameters" {}
-                                        "device_parameters" {}}}
+                                        "device_parameters"   {}}}
                          (m/add-procedure-element no-params {}))))
-          (it "should add protocol link"))
+          (it "should add protocol link"
+              (let [doc (keywordize-keys epoch)
+                    result (m/convert doc)
+                    protocol-link {
+                                   "_id"         "0252a208-72ec-4246-b5aa-7837039cfd2c--data-->f84c80d6-0dd8-4ac9-99ed-8d5448531769", ;; TODO
+                                   "inverse_rel" "containing_entity", ;; TODO
+                                   "rel"         "data",    ;; TODO
+                                   "target_id"   "f84c80d6-0dd8-4ac9-99ed-8d5448531769", ;; TODO
+                                   "links"       {"_collaboration_roots" (:experimentIds doc)},
+                                   "source_id"   "0252a208-72ec-4246-b5aa-7837039cfd2c", ;; TODO
+                                   "type"        "Relation"
+                                   }]
+                (should (some #{protocol-link} result)))))
 
 
 (describe "Key-value entry seq to map"
@@ -154,5 +166,3 @@
                         "key2" "value2"}
                        (util/map-from-key-value-map-seq '({:key "key1" :value "value1"} {:key "key2" :value "value2"})))))
 
-
-(run-specs)

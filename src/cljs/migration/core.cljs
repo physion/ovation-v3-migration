@@ -34,6 +34,11 @@
   (deep-merge doc {"attributes" {"protocol_parameters" (util/map-from-key-value-map-seq (:protocolParameters doc-v2))
                                  "device_parameters" (util/map-from-key-value-map-seq (:deviceParameters doc-v2))}}))
 
+(defmulti add-links :type)
+(defmethod add-links "Epoch"
+  [doc-v2 doc]
+  (concat [doc] '()))
+
 (defmulti convert-entity :type)
 (defmethod convert-entity "Project"
   [doc]
@@ -41,10 +46,18 @@
        (convert-base)
        (add-timeline-element doc)))
 
+(defmethod convert-entity "Epoch"
+  [doc]
+  (->> doc
+       (convert-base)
+       (add-timeline-element doc)
+       (add-procedure-element doc)
+       (add-links doc)))
+
 (defmulti convert :entity)
 (defmethod convert false
   [annotation-doc]
-  (annotation/convert-annotation annotation-doc))
+  (conj '() (annotation/convert-annotation annotation-doc)))
 
 (defmethod convert true
   [entity-doc]
