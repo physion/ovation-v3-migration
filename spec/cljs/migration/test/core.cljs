@@ -36,6 +36,53 @@
                                    "ownerUuid"     "d4ceca40-83cb-0130-3b75-22000aab13b3"}))
 
 
+(def note-annotation (clj->js {
+                               "_id"           "5540a9cf-3397-4d0e-9ad5-11f01444cdaf",
+                               "_rev"          "1-2142b116ca62ed79f849968427e2b424",
+                               "type"          "NoteAnnotation",
+                               "userId"        "8dc20340-36cf-0132-f8c3-22000ae9209a",
+                               "text"          "@suzie what do think of this?",
+                               "timestamp"     "2014-11-01T20:56:11.824Z",
+                               "entityId"      "3338d385-acb1-4dec-9bbf-b4ee0245d34e",
+                               "timestampZone" "UTC",
+                               "writeGroupIds" [],
+                               "experimentIds" [
+                                                "35dd6dd9-0203-427d-a8be-57f3f7e2580b"
+                                                ],
+                               "projectIds"    [
+                                                "b4053f54-0ba8-4eaa-9c05-6dcfd8e94324"
+                                                ],
+                               "version"       "2.1.29",
+                               "entity"        false,
+                               "ownerUuid"     "8dc20340-36cf-0132-f8c3-22000ae9209a"}))
+
+(def timeline-annotation (clj->js {"_id"           "08473fa7-35e4-4283-acd5-3696056eb02b",
+                                   "_rev"          "1-8b11f67404c59f3425a1be56a142d2b0",
+                                   "type"          "TimelineAnnotation",
+                                   "userId"        "1dbbba70-08c7-0131-2b72-22000aa62e2d",
+                                   "name"          "Wheel Run CW",
+                                   "notes"         "last-wheel-run-cw  lfpStartIndex: 4846 lfpEndIndex: 21562",
+                                   "start"         "2012-08-19T04:51:03.876-04:00",
+                                   "end"           "2012-08-19T04:51:17.249-04:00",
+                                   "entityId"      "00b4c153-3f6c-45f8-beb3-4c6496fbb871",
+                                   "startZone"     "America/New_York",
+                                   "endZone"       "America/New_York",
+                                   "writeGroupIds" [],
+                                   "experimentIds" [
+                                                    "39771d61-361e-497c-a55c-4cd3a83d1ac6"
+                                                    ],
+                                   "projectIds"    [
+                                                    "5e4300e9-dd4b-4074-ae59-fda73ae84512"
+                                                    ],
+                                   "version"       "2.1.0",
+                                   "trash_info"    {
+                                                    "trashing_user" "1dbbba70-08c7-0131-2b72-22000aa62e2d",
+                                                    "trashing_date" "2013-12-12T15:11:02.145-05:00",
+                                                    "trash_root"    "39771d61-361e-497c-a55c-4cd3a83d1ac6"}
+                                   "entity"        false,
+                                   "ownerUuid"     "1dbbba70-08c7-0131-2b72-22000aa62e2d"
+                                   }))
+
 
 
 
@@ -93,7 +140,37 @@
                           "type"            "Annotation"
                           "annotation_type" "properties"
                           "user"            (m/make-entity-uri (:userId doc))
-                          "entity"          (m/make-entity-uri (:entityId doc))} (m/convert (keywordize-keys (js->clj property-annotation)))))))
+                          "entity"          (m/make-entity-uri (:entityId doc))}
+                         (m/convert (keywordize-keys (js->clj property-annotation))))))
+
+          (it "should convert note annotation"
+              (let [doc (keywordize-keys (js->clj note-annotation))]
+                (should= {"_id"             (str "notes_" (:_id doc))
+                          "_rev"            (:_rev doc)
+                          "annotation"      {"text"       (:text doc)
+                                             "time_stamp" (:timestamp doc)}
+                          "links"           {"_collaboration_roots" (:experimentIds doc)}
+                          "type"            "Annotation"
+                          "annotation_type" "notes"
+                          "user"            (m/make-entity-uri (:userId doc))
+                          "entity"          (m/make-entity-uri (:entityId doc))}
+                         (m/convert (keywordize-keys (js->clj note-annotation))))))
+
+          (it "should convert timeline annotaiton"
+              (let [doc (keywordize-keys (js->clj timeline-annotation))]
+                (should= {"_id"             (str "timeline_events_" (:_id doc))
+                          "_rev"            (:_rev doc)
+                          "annotation"      {"name"  (:name doc)
+                                             "notes" (:notes doc)
+                                             "start" (:start doc)
+                                             "end"   (:end doc)}
+                          "links"           {"_collaboration_roots" (:experimentIds doc)}
+                          "type"            "Annotation"
+                          "annotation_type" "timeline_events"
+                          "user"            (m/make-entity-uri (:userId doc))
+                          "entity"          (m/make-entity-uri (:entityId doc))}
+                         (m/convert (keywordize-keys (js->clj timeline-annotation))))))
+          )
 
 
 (describe "Entity URI creation"
