@@ -111,6 +111,7 @@
                           "links"           {"_collaboration_roots" (:experimentIds doc)}
                           "type"            "Annotation"
                           "annotation_type" "keywords"
+                          "api_version"     "3"
                           "user"            (util/make-entity-uri (:userId doc))
                           "entity"          (util/make-entity-uri (:entityId doc))})
                        (m/convert (keywordize-keys (js->clj tag-annotation)))))
@@ -140,6 +141,7 @@
                           "links"           {"_collaboration_roots" (:experimentIds doc)}
                           "type"            "Annotation"
                           "annotation_type" "properties"
+                          "api_version"     "3"
                           "user"            (util/make-entity-uri (:userId doc))
                           "entity"          (util/make-entity-uri (:entityId doc))}
                          (m/convert (keywordize-keys (js->clj property-annotation))))))
@@ -153,6 +155,7 @@
                           "links"           {"_collaboration_roots" (:experimentIds doc)}
                           "type"            "Annotation"
                           "annotation_type" "notes"
+                          "api_version"     "3"
                           "user"            (util/make-entity-uri (:userId doc))
                           "entity"          (util/make-entity-uri (:entityId doc))}
                          (m/convert (keywordize-keys (js->clj note-annotation))))))
@@ -168,6 +171,7 @@
                           "links"           {"_collaboration_roots" (:experimentIds doc)}
                           "type"            "Annotation"
                           "annotation_type" "timeline_events"
+                          "api_version"     "3"
                           "user"            (util/make-entity-uri (:userId doc))
                           "entity"          (util/make-entity-uri (:entityId doc))}
                          (m/convert (keywordize-keys (js->clj timeline-annotation))))))
