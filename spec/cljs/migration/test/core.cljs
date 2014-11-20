@@ -2,6 +2,7 @@
   (:require-macros [speclj.core :refer [describe it should should= should-not run-specs]])
   (:require [speclj.core]
             [migration.core :as m]
+            [migration.util :as util]
             [clojure.walk :refer [keywordize-keys]]))
 
 (def tag-annotation (clj->js {"_id"           "c3ed9a1e-510f-4f1a-a953-3af077584714",
@@ -110,8 +111,8 @@
                           "links"           {"_collaboration_roots" (:experimentIds doc)}
                           "type"            "Annotation"
                           "annotation_type" "keywords"
-                          "user"            (m/make-entity-uri (:userId doc))
-                          "entity"          (m/make-entity-uri (:entityId doc))})
+                          "user"            (util/make-entity-uri (:userId doc))
+                          "entity"          (util/make-entity-uri (:entityId doc))})
                        (m/convert (keywordize-keys (js->clj tag-annotation)))))
 
           (it "should convert property document"
@@ -139,8 +140,8 @@
                           "links"           {"_collaboration_roots" (:experimentIds doc)}
                           "type"            "Annotation"
                           "annotation_type" "properties"
-                          "user"            (m/make-entity-uri (:userId doc))
-                          "entity"          (m/make-entity-uri (:entityId doc))}
+                          "user"            (util/make-entity-uri (:userId doc))
+                          "entity"          (util/make-entity-uri (:entityId doc))}
                          (m/convert (keywordize-keys (js->clj property-annotation))))))
 
           (it "should convert note annotation"
@@ -152,8 +153,8 @@
                           "links"           {"_collaboration_roots" (:experimentIds doc)}
                           "type"            "Annotation"
                           "annotation_type" "notes"
-                          "user"            (m/make-entity-uri (:userId doc))
-                          "entity"          (m/make-entity-uri (:entityId doc))}
+                          "user"            (util/make-entity-uri (:userId doc))
+                          "entity"          (util/make-entity-uri (:entityId doc))}
                          (m/convert (keywordize-keys (js->clj note-annotation))))))
 
           (it "should convert timeline annotaiton"
@@ -167,8 +168,8 @@
                           "links"           {"_collaboration_roots" (:experimentIds doc)}
                           "type"            "Annotation"
                           "annotation_type" "timeline_events"
-                          "user"            (m/make-entity-uri (:userId doc))
-                          "entity"          (m/make-entity-uri (:entityId doc))}
+                          "user"            (util/make-entity-uri (:userId doc))
+                          "entity"          (util/make-entity-uri (:entityId doc))}
                          (m/convert (keywordize-keys (js->clj timeline-annotation))))))
           )
 
@@ -176,5 +177,5 @@
 (describe "Entity URI creation"
           (it "should prepend ovation://entities/"
               (let [id "123-abc-def-789"]
-                (should= (str "ovation://entities/" id) (m/make-entity-uri id)))))
+                (should= (str "ovation://entities/" id) (util/make-entity-uri id)))))
 (run-specs)
