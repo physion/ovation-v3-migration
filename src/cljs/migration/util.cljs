@@ -25,6 +25,7 @@
 ;"links" {
 ;          "_collaboration_roots": [
 ;                                   "678544f2-0a3b-40a1-8b7e-3c3febb9c7f4"
+
 ;                                   ]
 ;                                  ,
 ;"source_id": "617a54ed-77c1-4964-9e52-49779b4dcc8f",
@@ -59,8 +60,7 @@
   "mapping helper for protocol/device parameters"
   [key]
   (fn [doc]
-    (into {}
-          (map (key doc) #(identity [(:key %) (:value %)])))))
+    (map-from-key-value-map-seq (key doc))))
 
 (defn named-sources
   "mapping helper for input/output sources"

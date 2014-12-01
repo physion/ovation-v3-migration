@@ -3,7 +3,8 @@
   (:require [speclj.core]
             [migration.core :as m]
             [migration.util :as util]
-            [clojure.walk :refer [keywordize-keys]]))
+            [clojure.walk :refer [keywordize-keys]]
+            [migration.mapping :as mapping]))
 
 (def root-source {
                   "_id"             "c88e43a9-6470-4700-a88c-e9de94a1e93f"
@@ -105,64 +106,80 @@
               })
 
 
-
-(describe "Base Entity conversion"
-          (it "converts base attributes and links"
-              (let [doc (keywordize-keys child-source)]
-                (should= {"_id"         (:_id doc)
-                          "_rev"        (:_rev doc)
-                          "type"        (:type doc)
-                          "api_version" "3"
-                          "links"       {util/collaboration-roots (:experimentIds doc)}
-                          "owner"       (util/make-entity-uri (:ownerUuid doc))}
-                         (m/convert-base doc)))))
-
-(describe "Timeline element conversion"
-          (it "should convert start/end timeline components"
-              (let [doc (keywordize-keys epoch)
-                    base (m/convert-base doc)]
-                (should= (merge-with merge base {"attributes" {"start"      (:start doc)
-                                                               "start_zone" (:startZone doc)
-                                                               "end"        (:end doc)
-                                                               "end_zone"   (:endZone doc)}})
-                         (m/add-timeline-element doc base))))
-          (it "should convert start-only timeline components"
-              (let [doc (keywordize-keys project)
-                    base (m/convert-base doc)]
-                (should= (merge-with merge base {"attributes" {"start"      (:start doc)
-                                                               "start_zone" (:startZone doc)}})
-                         (m/add-timeline-element doc base)))))
-
-(describe "Procedure element conversion"
-          (it "should convert protocol and device parameters"
+(describe "Epoch conversion"
+          (it "converts Epoch"
               (let [doc (keywordize-keys epoch)]
-                (should= {"attributes" {"protocol_parameters" (util/map-from-key-value-map-seq (:protocolParameters doc))
-                                        "device_parameters"   (util/map-from-key-value-map-seq (:deviceParameters doc))}}
-                         (m/add-procedure-element doc {}))))
-          (it "should allow have empty parameters"
-              (let [doc (keywordize-keys epoch)
-                    no-params (assoc doc :protocolParameters [] :deviceParameters [])]
-                (should= {"attributes" {"protocol_parameters" {}
-                                        "device_parameters"   {}}}
-                         (m/add-procedure-element no-params {}))))
-          (it "should add protocol link"
-              (let [doc (keywordize-keys epoch)
-                    result (m/convert doc)
-                    protocol-link {
-                                   "_id"         "0252a208-72ec-4246-b5aa-7837039cfd2c--data-->f84c80d6-0dd8-4ac9-99ed-8d5448531769", ;; TODO
-                                   "inverse_rel" "containing_entity", ;; TODO
-                                   "rel"         "data",    ;; TODO
-                                   "target_id"   "f84c80d6-0dd8-4ac9-99ed-8d5448531769", ;; TODO
-                                   "links"       {"_collaboration_roots" (:experimentIds doc)},
-                                   "source_id"   "0252a208-72ec-4246-b5aa-7837039cfd2c", ;; TODO
-                                   "type"        "Relation"
-                                   }]
-                (should (some #{protocol-link} result)))))
+                (should= {
+                          :_id (:_id doc)
+                          :_rev (:_rev doc)
+                          :api_version mapping/api-version
+                          :attributes {:start (:start doc)
+                                       :start_zone (:startZone doc)
+                                       :end (:end doc)
+                                       :end_zone (:endZone doc)
+                                       :protocol_parameters ((util/parameters :protocolParameters) doc)
+                                       :device_parameters ((util/parameters :deviceParameters) doc)}
+                          :links {:_collaboration_roots (:experimentIds doc)}
+                          }
+                         (first (m/convert doc))))))
 
-
-(describe "Key-value entry seq to map"
-          (it "should make a map from key-value record"
-              (should= {"key1" "value1"
-                        "key2" "value2"}
-                       (util/map-from-key-value-map-seq '({:key "key1" :value "value1"} {:key "key2" :value "value2"})))))
+;(describe "Base Entity conversion"
+;          (it "converts base attributes and links"
+;              (let [doc (keywordize-keys child-source)]
+;                (should= {"_id"         (:_id doc)
+;                          "_rev"        (:_rev doc)
+;                          "type"        (:type doc)
+;                          "api_version" "3"
+;                          "links"       {util/collaboration-roots (:experimentIds doc)}
+;                          "owner"       (util/make-entity-uri (:ownerUuid doc))}
+;                         (m/convert-base doc)))))
+;
+;(describe "Timeline element conversion"
+;          (it "should convert start/end timeline components"
+;              (let [doc (keywordize-keys epoch)
+;                    base (m/convert-base doc)]
+;                (should= (merge-with merge base {"attributes" {"start"      (:start doc)
+;                                                               "start_zone" (:startZone doc)
+;                                                               "end"        (:end doc)
+;                                                               "end_zone"   (:endZone doc)}})
+;                         (m/add-timeline-element doc base))))
+;          (it "should convert start-only timeline components"
+;              (let [doc (keywordize-keys project)
+;                    base (m/convert-base doc)]
+;                (should= (merge-with merge base {"attributes" {"start"      (:start doc)
+;                                                               "start_zone" (:startZone doc)}})
+;                         (m/add-timeline-element doc base)))))
+;
+;(describe "Procedure element conversion"
+;          (it "should convert protocol and device parameters"
+;              (let [doc (keywordize-keys epoch)]
+;                (should= {"attributes" {"protocol_parameters" (util/map-from-key-value-map-seq (:protocolParameters doc))
+;                                        "device_parameters"   (util/map-from-key-value-map-seq (:deviceParameters doc))}}
+;                         (m/add-procedure-element doc {}))))
+;          (it "should allow have empty parameters"
+;              (let [doc (keywordize-keys epoch)
+;                    no-params (assoc doc :protocolParameters [] :deviceParameters [])]
+;                (should= {"attributes" {"protocol_parameters" {}
+;                                        "device_parameters"   {}}}
+;                         (m/add-procedure-element no-params {}))))
+;          (it "should add protocol link"
+;              (let [doc (keywordize-keys epoch)
+;                    result (m/convert doc)
+;                    protocol-link {
+;                                   "_id"         "0252a208-72ec-4246-b5aa-7837039cfd2c--data-->f84c80d6-0dd8-4ac9-99ed-8d5448531769", ;; TODO
+;                                   "inverse_rel" "containing_entity", ;; TODO
+;                                   "rel"         "data",    ;; TODO
+;                                   "target_id"   "f84c80d6-0dd8-4ac9-99ed-8d5448531769", ;; TODO
+;                                   "links"       {"_collaboration_roots" (:experimentIds doc)},
+;                                   "source_id"   "0252a208-72ec-4246-b5aa-7837039cfd2c", ;; TODO
+;                                   "type"        "Relation"
+;                                   }]
+;                (should (some #{protocol-link} result)))))
+;
+;
+;(describe "Key-value entry seq to map"
+;          (it "should make a map from key-value record"
+;              (should= {"key1" "value1"
+;                        "key2" "value2"}
+;                       (util/map-from-key-value-map-seq '({:key "key1" :value "value1"} {:key "key2" :value "value2"})))))
 
