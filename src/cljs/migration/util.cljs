@@ -66,7 +66,8 @@
   "mapping helper for input/output sources"
   [key rel]
   (fn [doc]
-    (map (key doc) (fn [src] {:source_id :_id
-                                        :target_id (:value src)
-                                        :name      (:key src)
-                                        :rel       rel}))))
+    (map (key doc) (fn [src] {:source_id           :_id
+                              :target_id           (:value src)
+                              :name                (:key src)
+                              :rel                 rel
+                              :collaboration_roots (:experimentIds src)}))))

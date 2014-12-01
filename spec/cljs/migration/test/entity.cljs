@@ -110,19 +110,72 @@
           (it "converts Epoch"
               (let [doc (keywordize-keys epoch)]
                 (should= {
-                          :_id (:_id doc)
-                          :_rev (:_rev doc)
+                          :_id         (:_id doc)
+                          :_rev        (:_rev doc)
                           :api_version mapping/api-version
-                          :attributes {:start (:start doc)
-                                       :start_zone (:startZone doc)
-                                       :end (:end doc)
-                                       :end_zone (:endZone doc)
-                                       :protocol_parameters ((util/parameters :protocolParameters) doc)
-                                       :device_parameters ((util/parameters :deviceParameters) doc)}
-                          :links {:_collaboration_roots (:experimentIds doc)}
+                          :attributes  {:start               (:start doc)
+                                        :start_zone          (:startZone doc)
+                                        :end                 (:end doc)
+                                        :end_zone            (:endZone doc)
+                                        :protocol_parameters ((util/parameters :protocolParameters) doc)
+                                        :device_parameters   ((util/parameters :deviceParameters) doc)}
+                          :links       {:_collaboration_roots (:experimentIds doc)}
                           }
-                         (first (m/convert doc))))))
+                         (first (m/convert doc)))))
 
+          (it "has owner relation"
+              (let [doc (keywordize-keys epoch)]
+                (should (some #{{:_id         (str (:_id doc) "--owner-->" (:ownerUuid doc))
+                                 :type        "Relation"
+                                 :rel         "owner"
+                                 :inverse_rel nil
+                                 :source_id   (:_id doc)
+                                 :target_id   (:ownerUuid doc)
+                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
+
+          (it "has experiment relation"
+              (let [doc (keywordize-keys epoch)]
+                (should (some #{{:_id         (str (:_id doc) "--experiment-->" (:experiment doc))
+                                 :type        "Relation"
+                                 :rel         "experiment"
+                                 :inverse_rel nil
+                                 :source_id   (:_id doc)
+                                 :target_id   (:experiment doc)
+                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
+
+
+          (it "has parent relation"
+              (let [doc (keywordize-keys epoch)]
+                (should (some #{{:_id         (str (:_id doc) "--parent-->" (:parent doc))
+                                 :type        "Relation"
+                                 :rel         "parent"
+                                 :inverse_rel nil
+                                 :source_id   (:_id doc)
+                                 :target_id   (:parent doc)
+                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
+
+          (it "has not have protocol relation when protocol nil"
+              (let [doc (keywordize-keys epoch)]
+                (should (not (some #{{:_id         (str (:_id doc) "--protocol-->" (:protocol doc))
+                                      :type        "Relation"
+                                      :rel         "protocol"
+                                      :inverse_rel nil
+                                      :source_id   (:_id doc)
+                                      :target_id   (:protocol doc)
+                                      :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc))))))
+
+          (it "has not have protocol relation when protocol not nil"
+              (let [doc (keywordize-keys (assoc epoch "protocol" "91047ab3-d4da-471d-9170-37f164a5a027"))]
+                (should (some #{{:_id         (str (:_id doc) "--protocol-->" (:protocol doc))
+                                       :type        "Relation"
+                                       :rel         "protocol"
+                                       :inverse_rel nil
+                                       :source_id   (:_id doc)
+                                       :target_id   (:protocol doc)
+                                       :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
+          )
+
+"protocol" "91047ab3-d4da-471d-9170-37f164a5a027",
 ;(describe "Base Entity conversion"
 ;          (it "converts base attributes and links"
 ;              (let [doc (keywordize-keys child-source)]

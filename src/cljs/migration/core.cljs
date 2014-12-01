@@ -55,9 +55,20 @@
 ;       (add-procedure-element doc)
 ;       (add-links doc)))
 
+(defn link-docs
+  [doc migration key reln-fn]
+  (map (fn [[rel target-fn]]
+         (map (fn [link-description] (reln-fn link-description)) (target-fn doc)))
+       (key migration)))
+
 (defn convert-links
-  [doc]
-  [])
+  [doc migration]
+  (let [links (link-docs doc migration :links util/make-relation)
+        named_links (link-docs doc migration :named_links util/make-named-relation)]
+
+    ;(flatten [links named_links]))
+    links)
+  )
 
 (defn convert-entity
   [doc]
@@ -71,7 +82,7 @@
         collab {:links {:_collaboration_roots (:experimentIds doc)}}]
 
 
-    (flatten [(conj base attributes collab) (convert-links doc)])))
+    (flatten [(conj base attributes collab) (convert-links doc migration)])))
 
 (defmulti convert :entity)
 (defmethod convert false
