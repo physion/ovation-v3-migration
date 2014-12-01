@@ -40,3 +40,33 @@
                     :target_id target_id
                     :source_id source_id
                     :links {:_collaboration_roots collaboration_roots})))
+
+
+(defn make-named-rel-id
+  "49754fa6-df69-452e-8808-24e7d12c5bf6--inputs>Input 1-->35c67823-0f38-4566-9585-ae4a104ca662"
+  [source rel name target]
+  (str source "--" rel ">" name "-->" target))
+
+(defn make-named-relation
+  "Makes a named relation given arguments map"
+  [opts]
+  (let [{:keys [rel name target_id source_id]} opts]
+    (assoc (make-relation opts)
+      :_id (make-named-rel-id source_id rel name target_id)
+      :name name)))
+
+(defn parameters
+  "mapping helper for protocol/device parameters"
+  [key]
+  (fn [doc]
+    (into {}
+          (map (key doc) #(identity [(:key %) (:value %)])))))
+
+(defn named-sources
+  "mapping helper for input/output sources"
+  [key rel]
+  (fn [doc]
+    (map (key doc) (fn [src] {:source_id :_id
+                                        :target_id (:value src)
+                                        :name      (:key src)
+                                        :rel       rel}))))
