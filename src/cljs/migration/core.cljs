@@ -32,7 +32,7 @@
 (defn add-procedure-element
   [doc-v2 doc]
   (deep-merge doc {"attributes" {"protocol_parameters" (util/map-from-key-value-map-seq (:protocolParameters doc-v2))
-                                 "device_parameters" (util/map-from-key-value-map-seq (:deviceParameters doc-v2))}}))
+                                 "device_parameters"   (util/map-from-key-value-map-seq (:deviceParameters doc-v2))}}))
 
 (defmulti add-links :type)
 (defmethod add-links "Epoch"
