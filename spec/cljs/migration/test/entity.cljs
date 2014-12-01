@@ -167,17 +167,33 @@
           (it "has not have protocol relation when protocol not nil"
               (let [doc (keywordize-keys (assoc epoch "protocol" "91047ab3-d4da-471d-9170-37f164a5a027"))]
                 (should (some #{{:_id         (str (:_id doc) "--protocol-->" (:protocol doc))
-                                       :type        "Relation"
-                                       :rel         "protocol"
-                                       :inverse_rel nil
-                                       :source_id   (:_id doc)
-                                       :target_id   (:protocol doc)
-                                       :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
+                                 :type        "Relation"
+                                 :rel         "protocol"
+                                 :inverse_rel nil
+                                 :source_id   (:_id doc)
+                                 :target_id   (:protocol doc)
+                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
 
 
-          (it "has input source relations"
-              (should false))
+          (it "has input source relations when present"
+              (let [doc (keywordize-keys epoch)]
+                (should (some #{{:_id         (str (:_id doc) "--input_sources>unit1-->" "00c66b67-1126-4cc0-af05-fd4ad188567f")
+                                 :type        "Relation"
+                                 :rel         "input_sources"
+                                 :name        "unit1"
+                                 :inverse_rel nil
+                                 :source_id   (:_id doc)
+                                 :target_id   "00c66b67-1126-4cc0-af05-fd4ad188567f"
+                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
 
-          (it "has output source relations"
-              (should false))
+          (it "has output source relations when present"
+              (let [doc (assoc (keywordize-keys epoch) :outputSources (:inputSources (keywordize-keys epoch)))]
+                (should (some #{{:_id         (str (:_id doc) "--output_sources>unit1-->" "00c66b67-1126-4cc0-af05-fd4ad188567f")
+                                 :type        "Relation"
+                                 :rel         "output_sources"
+                                 :name        "unit1"
+                                 :inverse_rel nil
+                                 :source_id   (:_id doc)
+                                 :target_id   "00c66b67-1126-4cc0-af05-fd4ad188567f"
+                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
           )

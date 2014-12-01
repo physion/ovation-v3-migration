@@ -66,8 +66,7 @@
   (let [links (link-docs doc migration :links util/make-relation)
         named_links (link-docs doc migration :named_links util/make-named-relation)]
 
-    ;(flatten [links named_links]))
-    links)
+    (flatten [links named_links]))
   )
 
 (defn convert-entity
