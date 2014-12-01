@@ -9,21 +9,22 @@
                                     :deviceParameters   :device_parameters
                                     }
                       :links       {;; Per link, list of added. EXCLUDES _collaboration_roots
-                                    {:owner [{:source_id :_id
-                                              :target_id :ownerUuid
-                                              :rel       "owner"
-                                              :type      "Relation"}]}
-                                    {:experiment [{:source_id :_id
-                                                   :target_id :experiment
-                                                   :rel       "experiment"
-                                                   :type      "Relation"}]}
-                                    {:parent [{:source_id :_id
-                                               :target_id :parent
-                                               :rel       "parent"
-                                               :type      "Relation"}]}}
+                                    :owner      [{:source_id :_id
+                                                  :target_id :ownerUuid
+                                                  :rel       "owner"
+                                                  :type      "Relation"}]
+                                    :experiment [{:source_id :_id
+                                                  :target_id :experiment
+                                                  :rel       "experiment"
+                                                  :type      "Relation"}]
+                                    :parent     [{:source_id :_id
+                                                  :target_id :parent
+                                                  :rel       "parent"
+                                                  :type      "Relation"}]}
 
-                      :named_links {:input_sources  []
-                                    :output_sources []}}})
+                      :named_links {:input_sources  ["a"]
+                                    :output_sources ["a"]}}
+             })
 
 
 ;(def example {:links {:rel {:added {:name        "optional rel name"
