@@ -62,8 +62,8 @@
   (fn [doc]
     (map-from-key-value-map-seq (key doc))))
 
-(defn named-sources
-  "mapping helper for input/output sources"
+(defn named-targets
+  "mapping helper for input/output sources (and other key/value named relationships)"
   [key rel]
   (fn [doc]
     (map (fn [src] {:source_id           (:_id doc)
