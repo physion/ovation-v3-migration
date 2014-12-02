@@ -139,7 +139,26 @@
                                  :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
           )
 
+(describe "Trashed entities"
+          (it "should migrate trash info"
+              (let [trash-info (keywordize-keys {"trashing_user" "1dbbba70-08c7-0131-2b72-22000aa62e2d",
+                                                 "trashing_date" "2013-12-12T15:11:03.019-05:00",
+                                                 "trash_root"    "39771d61-361e-497c-a55c-4cd3a83d1ac6"})
+                    trashed (assoc (keywordize-keys epoch) :trash_info trash-info)
+                    expected (keywordize-keys {"trashing_user" "ovation://entities/1dbbba70-08c7-0131-2b72-22000aa62e2d",
+                                               "trashing_date" "2013-12-12T15:11:03.019-05:00",
+                                               "trash_root"    "ovation://entities/39771d61-361e-497c-a55c-4cd3a83d1ac6"})]
+
+                (should= expected (:trash_info (first (m/convert trashed)))))))
+
 (describe "Migrations"
           (it "has all entities"
               (should= #{"Project", "Experiment", "EpochGroup", "Source", "Protocol", "Epoch", "Measurement", "Resource", "AnalysisRecord", "User", "EquipmentSetup"}
                        (set (keys mapping/v2->v3)))))
+
+;
+;"trash_info": {
+"trashing_user" "1dbbba70-08c7-0131-2b72-22000aa62e2d",
+"trashing_date" "2013-12-12T15:11:03.019-05:00",
+"trash_root" "39771d61-361e-497c-a55c-4cd3a83d1ac6"
+;              ,

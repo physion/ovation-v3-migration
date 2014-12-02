@@ -32,12 +32,16 @@
                                                 [v3 (v2 doc)]) (:attributes migration)))}
         collab {:links {:_collaboration_roots (if (= (:type doc) "Project")
                                                 (:projectIds doc)
-                                                (:experimentIds doc))}}]
+                                                (:experimentIds doc))}}
+
+        trash (if-let [info (:trash_info doc)] {:trash_info {:trashing_user (str "ovation://entities/" (:trashing_user info))
+                                                             :trashing_date (:trashing_date info)
+                                                             :trash_root (str "ovation://entities/" (:trash_root info))}} {})]
 
 
-    (flatten [(conj base attributes collab) (convert-links doc migration)])))
+    (flatten [(conj base attributes collab trash) (convert-links doc migration)])))
 
-(defmulti convert :entity)
+(defmulti ^:export convert :entity)
 (defmethod convert false
   [annotation-doc]
   (conj '() (annotation/convert-annotation annotation-doc)))
