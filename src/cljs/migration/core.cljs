@@ -23,14 +23,16 @@
 (defn convert-entity
   [doc]
   (let [migration (mapping/v2->v3 (:type doc))
-        base {:_id (:_id doc)
-              :_rev (:_rev doc)
-              :type (:type doc)
+        base {:_id         (:_id doc)
+              :_rev        (:_rev doc)
+              :type        (:type doc)
               :api_version mapping/api-version}
 
         attributes {:attributes (into {} (map (fn [[v3 v2]]
                                                 [v3 (v2 doc)]) (:attributes migration)))}
-        collab {:links {:_collaboration_roots (:experimentIds doc)}}]
+        collab {:links {:_collaboration_roots (if (= (:type doc) "Project")
+                                                (:projectIds doc)
+                                                (:experimentIds doc))}}]
 
 
     (flatten [(conj base attributes collab) (convert-links doc migration)])))

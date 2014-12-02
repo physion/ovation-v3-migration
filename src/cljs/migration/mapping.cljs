@@ -134,47 +134,72 @@
 
                                :named_links {}}
 
-             "Protocol" {:attributes {:name :name
-                                      :protocol_document :protocolDocument
-                                      :code_repository :scmUrl
-                                      :code_function :functionName
-                                      :code_revision :scmRevision}
+             "Protocol"       {:attributes  {:name              :name
+                                             :protocol_document :protocolDocument
+                                             :code_repository   :scmUrl
+                                             :code_function     :functionName
+                                             :code_revision     :scmRevision}
 
-                         :links {:owner    owner-link}
-                         :named_links {}}
+                               :links       {:owner owner-link}
+                               :named_links {}}
 
-             ;"Measurement" {}
-             ;"Experiment" {}
-             ;"Project" {}
+             "Measurement"    {:attributes  {;; v3 <- v2
+                                             :sources :sourceNames
+                                             :devices :devices
+                                             :name    :name
+                                             }
+
+                               :links       {;; Per link, list of added.
+                                             :owner owner-link
+                                             :epoch (fn [d] [{:source_id           (:_id d)
+                                                              :target_id           (:epoch d)
+                                                              :rel                 "epoch"
+                                                              :inverse_rel         "measurements"
+                                                              :collaboration_roots (:experimentIds d)}])
+                                             :data  (fn [d] [{:source_id           (:_id d)
+                                                              :target_id           (:protocol d)
+                                                              :rel                 "data"
+                                                              :inverse_rel         "containing_entity"
+                                                              :collaboration_roots (:experimentIds d)}])}
+
+                               :named_links {}}
+
+             "Experiment"     {:attributes  {;; v3 <- v2
+                                             :purpose             :purpose
+                                             :start               :start
+                                             :start_zone          :startZone
+                                             :protocol_parameters (util/parameters :protocolParameters)
+                                             :device_parameters   (util/parameters :deviceParameters)
+                                             }
+                               :links       {;; Per link, list of added.
+                                             :owner           owner-link
+                                             :equipment_setup (fn [d] [{:source_id           (:_id d)
+                                                                        :target_id           (:equipmentSetup d)
+                                                                        :rel                 "equipment_setup"
+                                                                        :inverse_rel         "experiments"
+                                                                        :collaboration_roots (:experimentIds d)}])
+                                             :projects        (fn [d] (map (fn [child] {:source_id           (:_id d)
+                                                                                        :target_id           child
+                                                                                        :rel                 "projects"
+                                                                                        :inverse_rel         "experiments"
+                                                                                        :collaboration_roots (:experimentIds d)}) (:projectIds d)))}
+
+                               :named_links {}}
+
+             "Project"        {:attributes  {;; v3 <- v2
+                                             :purpose :purpose
+                                             :name    :name
+                                             }
+                               :links       {;; Per link, list of added.
+                                             :owner           owner-link
+                                             :projects        (fn [d] (map (fn [child] {:source_id           (:_id d)
+                                                                                        :target_id           child
+                                                                                        :rel                 "projects"
+                                                                                        :inverse_rel         "experiments"
+                                                                                        :collaboration_roots (:experimentIds d)}) (:projectIds d)))}
+
+                               :named_links {
+                                             :write_groups [] ;; We haven't used write groups in v2
+                                             }}
              })
 
-
-;public static final String NAME = "name";
-;public static final String PROTOCOL_DOCUMENT = "protocol_document";
-;
-;public static final String CODE_FUNCTION = "code_function";
-;public static final String CODE_SCM_URL = "code_repository";
-;public static final String CODE_REVISION = "code_revision";
-
-;
-;;{
-;"_id": "11b13d33-9fad-4612-ba0d-5d5a5dfa85b6",
-;"_rev": "28-6f87c10d3f5bc4ca1bc81b3e587ec60a",
-;"name": "fenton-analysis-protocol-demo",
-;"entity": true,
-;"scmUrl": "https://github.com/FentonLab/analysis-code",
-;"version": "2.0-beta6",
-;"writeGroupIds": [],
-;"protocolDocument": "Automated analysis",
-;"experimentIds": [
-;                  "aeb7ad18-e491-4438-96a3-2b8a5ff60399"
-;                  ],
-;"projectIds": [
-;               "fabd0d84-ccb1-4dde-a4c8-bd0915d25bbf"
-;               ],
-;"scmRevision": "TBD",
-;"type": "Protocol",
-;"ownerUuid": "d4ceca40-83cb-0130-3b75-22000aab13b3",
-;"resources": [],
-;"functionName": "analysis_entry_function"
-;  }
