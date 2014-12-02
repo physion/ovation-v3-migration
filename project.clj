@@ -13,16 +13,24 @@
 
             :hooks [leiningen.cljsbuild]
 
-            :cljsbuild {:builds        {:dev  {:source-paths   ["src/cljs" "spec/cljs"]
-                                               :compiler       {:output-to "target/main/migration-dev.js"}
-                                               :notify-command ["node_modules/phantomjs/lib/phantom/bin/phantomjs" "bin/speclj" "target/main/compiled.js"]}
-                                        :prod {:source-paths ["src/cljs"]
-                                               :compiler     {:output-to     "target/main/migration.js"
-                                                              :optimizations :simple}}
-                                        :node {:source-paths ["src/cljs"]
-                                               :compiler     {:output-to     "target/main/migration-node.js"
-                                                              :optimizations :advanced
-                                                              :target        :nodejs}}}
+            :cljsbuild {:builds        {:dev      {:source-paths   ["src/cljs" "spec/cljs"]
+                                                   :compiler       {:output-to "target/main/migration-dev.js"}
+                                                   :notify-command ["node_modules/phantomjs/lib/phantom/bin/phantomjs" "bin/speclj" "target/main/migration-dev.js"]}
+                                        :prod     {:source-paths ["src/cljs"]
+                                                   :compiler     {:output-to     "target/main/migration.js"
+                                                                  :optimizations :simple}}
+                                        :node-dev {:source-paths   ["src/cljs" "spec/cljs"]
+                                                   :compiler       {:output-to     "target/main/migration-node-dev.js"
+                                                                    :optimizations :simple
+                                                                    :target        :nodejs}
+                                                   :notify-command ["node_modules/phantomjs/lib/phantom/bin/phantomjs" "bin/speclj" "target/main/migration-node-dev.js"]}
+                                        :node     {:source-paths ["src/cljs"]
+                                                   :compiler     {:output-to     "target/main/migration-node.js"
+                                                                  :optimizations :simple
+                                                                  :target        :nodejs}}}
 
                         :test-commands {"test" ["node_modules/phantomjs/lib/phantom/bin/phantomjs" "bin/speclj" "target/main/compiled.js"]}}
             )
+
+
+

@@ -1,5 +1,5 @@
 var Cloudant = require('cloudant');
-var v3 = require('./target/main/migration-node.js')
+var v3 = require('../target/main/migration-node.js')
 
 // Usage:
 // $ node migration.js CLOUDANT_USER CLOUDANT_PASSWORD
@@ -64,11 +64,9 @@ Cloudant({account:me, password:password}, function(er, cloudant) {
           old_db.list(function(err, body) {
             if (!err) {
               body.rows.forEach(function(doc) {
-                console.log(doc);
+                //console.log(doc);
 
-                // Put migration code here
-
-                var new_docs = v3.migration.core.migrate(doc); // <-- MIGRATE FUNCTION HERE!
+                var new_docs = v3.migration.core.migrate(doc);
                 var doc_ids = "[";
                 for(var i = 0; i<new_docs.length; i++) {
                  doc_ids += ", " + new_docs[i]["_id"];
