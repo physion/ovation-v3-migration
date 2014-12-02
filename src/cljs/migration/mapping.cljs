@@ -27,10 +27,12 @@
                                              :experiment (fn [d] [{:source_id           (:_id d)
                                                                    :target_id           (:experiment d)
                                                                    :rel                 "experiment"
+                                                                   :inverse_rel         "epochs"
                                                                    :collaboration_roots (:experimentIds d)}])
                                              :parent     (fn [d] [{:source_id           (:_id d)
                                                                    :target_id           (:parent d)
                                                                    :rel                 "parent"
+                                                                   :inverse_rel         "epochs"
                                                                    :collaboration_roots (:experimentIds d)}])
                                              :protocol   protocol-link}
 
@@ -95,11 +97,7 @@
                                              :supporting_file_urls :supportingFiles
                                              }
 
-                               :links       {:owner             owner-link
-                                             :containing_entity (fn [d] [{:source_id           (:_id d)
-                                                                          :target_id           (:containingEntity d)
-                                                                          :rel                 "parent"
-                                                                          :collaboration_roots (:experimentIds d)}])}
+                               :links       {:owner             owner-link}
 
                                :named_links {}}
 
@@ -123,6 +121,7 @@
                                              :parent   (fn [d] [{:source_id           (:_id d)
                                                                  :target_id           (:parent d)
                                                                  :rel                 "parent"
+                                                                 :inverse_rel         "epoch_groups"
                                                                  :collaboration_roots (:experimentIds d)}])
                                              :protocol protocol-link}
 
@@ -177,7 +176,7 @@
                                                                                         :rel                 "projects"
                                                                                         :inverse_rel         "experiments"
                                                                                         :collaboration_roots (:experimentIds d)}) (:projectIds d)))
-                                             :protocol protocol-link}
+                                             :protocol        protocol-link}
 
                                :named_links {}}
 
@@ -186,12 +185,12 @@
                                              :name    :name
                                              }
                                :links       {;; Per link, list of added.
-                                             :owner           owner-link
-                                             :projects        (fn [d] (map (fn [child] {:source_id           (:_id d)
-                                                                                        :target_id           child
-                                                                                        :rel                 "projects"
-                                                                                        :inverse_rel         "experiments"
-                                                                                        :collaboration_roots (:experimentIds d)}) (:projectIds d)))}
+                                             :owner    owner-link
+                                             :projects (fn [d] (map (fn [child] {:source_id           (:_id d)
+                                                                                 :target_id           child
+                                                                                 :rel                 "projects"
+                                                                                 :inverse_rel         "experiments"
+                                                                                 :collaboration_roots (:experimentIds d)}) (:projectIds d)))}
 
                                :named_links {
                                              :write_groups [] ;; We haven't used write groups in v2

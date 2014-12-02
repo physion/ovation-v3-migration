@@ -79,7 +79,7 @@
                 (should (some #{{:_id         (str (:_id doc) "--experiment-->" (:experiment doc))
                                  :type        "Relation"
                                  :rel         "experiment"
-                                 :inverse_rel nil
+                                 :inverse_rel "epochs"
                                  :source_id   (:_id doc)
                                  :target_id   (:experiment doc)
                                  :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
@@ -90,7 +90,7 @@
                 (should (some #{{:_id         (str (:_id doc) "--parent-->" (:parent doc))
                                  :type        "Relation"
                                  :rel         "parent"
-                                 :inverse_rel nil
+                                 :inverse_rel "epochs"
                                  :source_id   (:_id doc)
                                  :target_id   (:parent doc)
                                  :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
@@ -142,4 +142,4 @@
 (describe "Migrations"
           (it "has all entities"
               (should= #{"Project", "Experiment", "EpochGroup", "Source", "Protocol", "Epoch", "Measurement", "Resource", "AnalysisRecord", "User", "EquipmentSetup"}
-                       (into #{} (keys mapping/v2->v3)))))
+                       (set (keys mapping/v2->v3)))))
