@@ -6,8 +6,14 @@
 (def owner-link (fn [d] [{:source_id           (:_id d)
                           :target_id           (:ownerUuid d)
                           :rel                 "owner"
-                          :collaboration_roots (:experimentIds d)}])
-  )
+                          :collaboration_roots (:experimentIds d)}]))
+
+(def protocol-link (fn [d] (if (:protocol d) [{:source_id           (:_id d)
+                                               :target_id           (:protocol d)
+                                               :rel                 "protocol"
+                                               :inverse_rel         "procedures"
+                                               :collaboration_roots (:experimentIds d)}] [])))
+
 (def v2->v3 {"Epoch"          {:attributes  {;; v3 <- v2
                                              :start               :start
                                              :end                 :end
@@ -26,11 +32,7 @@
                                                                    :target_id           (:parent d)
                                                                    :rel                 "parent"
                                                                    :collaboration_roots (:experimentIds d)}])
-                                             :protocol   (fn [d] (if (:protocol d) [{:source_id           (:_id d)
-                                                                                     :target_id           (:protocol d)
-                                                                                     :rel                 "protocol"
-                                                                                     :inverse_rel         "procedures"
-                                                                                     :collaboration_roots (:experimentIds d)}] []))}
+                                             :protocol   protocol-link}
 
                                :named_links {;; Per link, list of added. EXCLUDES _collaboration_roots
                                              :input_sources  (util/named-targets :inputSources "input_sources")
@@ -78,11 +80,7 @@
                                                                  :target_id           (:experiment d)
                                                                  :rel                 "parent"
                                                                  :collaboration_roots (:experimentIds d)}])
-                                             :protocol (fn [d] (if (:protocol d) [{:source_id           (:_id d)
-                                                                                   :target_id           (:protocol d)
-                                                                                   :rel                 "protocol"
-                                                                                   :inverse_rel         "procedures"
-                                                                                   :collaboration_roots (:experimentIds d)}] []))}
+                                             :protocol protocol-link}
 
                                :named_links {:inputs  (util/named-targets :inputs "inputs")
 
@@ -126,11 +124,7 @@
                                                                  :target_id           (:parent d)
                                                                  :rel                 "parent"
                                                                  :collaboration_roots (:experimentIds d)}])
-                                             :protocol (fn [d] (if (:protocol d) [{:source_id           (:_id d)
-                                                                                   :target_id           (:protocol d)
-                                                                                   :rel                 "protocol"
-                                                                                   :inverse_rel         "procedures"
-                                                                                   :collaboration_roots (:experimentIds d)}] []))}
+                                             :protocol protocol-link}
 
                                :named_links {}}
 
@@ -182,7 +176,8 @@
                                                                                         :target_id           child
                                                                                         :rel                 "projects"
                                                                                         :inverse_rel         "experiments"
-                                                                                        :collaboration_roots (:experimentIds d)}) (:projectIds d)))}
+                                                                                        :collaboration_roots (:experimentIds d)}) (:projectIds d)))
+                                             :protocol protocol-link}
 
                                :named_links {}}
 
