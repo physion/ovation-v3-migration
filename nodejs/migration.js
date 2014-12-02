@@ -1,4 +1,5 @@
 var Cloudant = require('cloudant');
+var v3 = require('./target/main/migration-node.js')
 
 // Usage:
 // $ node migration.js CLOUDANT_USER CLOUDANT_PASSWORD
@@ -21,7 +22,7 @@ Cloudant({account:me, password:password}, function(er, cloudant) {
     console.log('Server version = %s', reply.version);
     console.log('I am %s and my roles are %j', reply.userCtx.name, reply.userCtx.roles);
 
-    // Get the list of all databasess
+    // Get the list of all databases
     cloudant.db.list(function(er, all_dbs) {
       if (er) {
         return console.log('Error listing databases: %s', er.message)
@@ -30,7 +31,7 @@ Cloudant({account:me, password:password}, function(er, cloudant) {
       // Iterate through each db for this user
       for (var i = 0; i < all_dbs.length; i++) {
         var db_name = all_dbs[i];
-        
+
         // only do dbs with "db-"
         var prefix = "db-";
         if (db_name.slice(0, prefix.length) != prefix) {
@@ -66,17 +67,22 @@ Cloudant({account:me, password:password}, function(er, cloudant) {
                 console.log(doc);
 
                 // Put migration code here
-                /*
-                var new_doc = migrate(doc); // <-- MIGRATE FUNCTION HERE!
-                new_db.insert(new_doc, new_doc.id, function(err, body, header) {
+
+                var new_docs = v3.migration.core.migrate(doc); // <-- MIGRATE FUNCTION HERE!
+                var doc_ids = "[";
+                for(var i = 0; i<new_docs.length; i++) {
+                 doc_ids += ", " + new_docs[i]["_id"];
+                }
+                doc_ids += "]";
+
+                new_db.bulk(new_docs, function(err, body, header) {
                   if (err) {
-                    console.log("ERROR - inserting document id: " + new_doc.id);
+                    console.log("ERROR - inserting documents " + doc_ids + " - " + err);
                     process.exit(1);
                   }
 
-                  console.log("INSERT: " + new_doc.id)
+                  console.log("MIGRATE: " + doc_ids)
                 });
-                */
               });
             }
           });
