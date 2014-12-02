@@ -102,4 +102,12 @@
                                                                           :collaboration_roots (:experimentIds d)}])}
 
                                :named_links {}}
+
+             "EquipmentSetup" {:attributes  {;; v3 <- v2
+                                             :device_details (util/parameters :devices)
+                                             }
+
+                               :links       {:owner owner-link}
+
+                               :named_links {}}
              })
