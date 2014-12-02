@@ -1,41 +1,47 @@
 (ns migration.core
-  (:require [clojure.walk]))
+  (:require [clojure.walk]
+            [migration.annotation :as annotation]
+            [migration.util :as util]
+            [migration.mapping :as mapping]))
 
-(defn make-entity-uri
-  "Makes an ovation:// entity URI from a UUID string"
-  [id]
-  (str "ovation://entities/" id))
 
-(def collaboration-roots "_collaboration_roots")
 
-(defn convert-annotation-base
+(defn link-docs
+  [doc migration key reln-fn]
+  (map (fn [[rel target-fn]]
+         (map (fn [link-description] (reln-fn link-description)) (target-fn doc)))
+       (key migration)))
+
+(defn convert-links
+  [doc migration]
+  (let [links (link-docs doc migration :links util/make-relation)
+        named_links (link-docs doc migration :named_links util/make-named-relation)]
+
+    (flatten [links named_links]))
+  )
+
+(defn convert-entity
   [doc]
-  {
-   "_rev"   (:_rev doc)
-   "type"   "Annotation"
-   "links"  {collaboration-roots (:experimentIds doc)}
-   "user"   (make-entity-uri (:userId doc))
-   "entity" (make-entity-uri (:entityId doc))
-   })
+  (let [migration (mapping/v2->v3 (:type doc))
+        base {:_id         (:_id doc)
+              :_rev        (:_rev doc)
+              :type        (:type doc)
+              :api_version mapping/api-version}
+
+        attributes {:attributes (into {} (map (fn [[v3 v2]]
+                                                [v3 (v2 doc)]) (:attributes migration)))}
+        collab {:links {:_collaboration_roots (if (= (:type doc) "Project")
+                                                (:projectIds doc)
+                                                (:experimentIds doc))}}]
 
 
-(defn convert-keyword-document
-  "Converts an annotation document"
-  [doc-v2]
-
-  (let [base (convert-annotation-base doc-v2)]
-    (assoc base
-      "_id"        (str "keywords_" (:_id doc-v2))
-      "annotation_type" "keywords"
-      "annotation" {"tag" (:tag doc-v2)})))
-
-
-(defmulti convert-annotation :type)
-(defmethod convert-annotation "TagAnnotation"
-  [doc-v2]
-  (convert-keyword-document doc-v2))
-
+    (flatten [(conj base attributes collab) (convert-links doc migration)])))
 
 (defmulti convert :entity)
-(defmethod convert false [annotation-doc]
-  (convert-annotation annotation-doc))
+(defmethod convert false
+  [annotation-doc]
+  (conj '() (annotation/convert-annotation annotation-doc)))
+
+(defmethod convert true
+  [entity-doc]
+  (convert-entity entity-doc))
