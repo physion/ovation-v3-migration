@@ -50,7 +50,3 @@
 (defmethod convert true
   [entity-doc]
   (convert-entity entity-doc))
-
-(defn ^:export migrate
-  [doc]
-  (convert doc))

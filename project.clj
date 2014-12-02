@@ -1,9 +1,9 @@
 (defproject v3-migration "1.0.0-SNAPSHOT"
             :description "v3-migration"
             :dependencies [[org.clojure/clojure "1.5.1"]
-                           [org.clojure/clojurescript "0.0-2156"]]
+                           [org.clojure/clojurescript "0.0-2197"]]
 
-            :plugins [[lein-cljsbuild "1.0.1"]
+            :plugins [[lein-cljsbuild "1.0.3"]
                       [lein-pprint "1.1.1"]
                       [speclj "3.1.0"]]
 
@@ -14,11 +14,13 @@
             :hooks [leiningen.cljsbuild]
 
             :cljsbuild {:builds        {:dev      {:source-paths   ["src/cljs" "spec/cljs"]
-                                                   :compiler       {:output-to "target/main/migration-dev.js"}
+                                                   :compiler       {:output-to    "target/main/migration-dev.js"
+                                                                    :pretty-print true}
                                                    :notify-command ["node_modules/phantomjs/lib/phantom/bin/phantomjs" "bin/speclj" "target/main/migration-dev.js"]}
                                         :prod     {:source-paths ["src/cljs"]
                                                    :compiler     {:output-to     "target/main/migration.js"
-                                                                  :optimizations :simple}}
+                                                                  :optimizations :simple
+                                                                  :pretty-print  true}}
                                         :node-dev {:source-paths   ["src/cljs" "spec/cljs"]
                                                    :compiler       {:output-to     "target/main/migration-node-dev.js"
                                                                     :optimizations :simple
@@ -27,7 +29,8 @@
                                         :node     {:source-paths ["src/cljs"]
                                                    :compiler     {:output-to     "target/main/migration-node.js"
                                                                   :optimizations :simple
-                                                                  :target        :nodejs}}}
+                                                                  :target        :nodejs
+                                                                  :pretty-print  true}}}
 
                         :test-commands {"test" ["node_modules/phantomjs/lib/phantom/bin/phantomjs" "bin/speclj" "target/main/compiled.js"]}}
             )
