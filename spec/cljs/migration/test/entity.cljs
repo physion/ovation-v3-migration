@@ -100,7 +100,7 @@
                 (should (not (some #{{:_id         (str (:_id doc) "--protocol-->" (:protocol doc))
                                       :type        "Relation"
                                       :rel         "protocol"
-                                      :inverse_rel nil
+                                      :inverse_rel "procedures"
                                       :source_id   (:_id doc)
                                       :target_id   (:protocol doc)
                                       :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc))))))
@@ -110,7 +110,7 @@
                 (should (some #{{:_id         (str (:_id doc) "--protocol-->" (:protocol doc))
                                  :type        "Relation"
                                  :rel         "protocol"
-                                 :inverse_rel nil
+                                 :inverse_rel "procedures"
                                  :source_id   (:_id doc)
                                  :target_id   (:protocol doc)
                                  :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
@@ -142,4 +142,4 @@
 (describe "Migrations"
           (it "has all entities"
               (should= #{"Project", "Experiment", "EpochGroup", "Source", "Protocol", "Epoch", "Measurement", "Resource", "AnalysisRecord", "User", "EquipmentSetup"}
-                       (keys mapping/v2->v3))))
+                       (into #{} (keys mapping/v2->v3)))))

@@ -23,12 +23,13 @@
                                                                    :rel                 "experiment"
                                                                    :collaboration_roots (:experimentIds d)}])
                                              :parent     (fn [d] [{:source_id           (:_id d)
-                                                                   :target_id           (:experiment d)
+                                                                   :target_id           (:parent d)
                                                                    :rel                 "parent"
                                                                    :collaboration_roots (:experimentIds d)}])
                                              :protocol   (fn [d] (if (:protocol d) [{:source_id           (:_id d)
                                                                                      :target_id           (:protocol d)
                                                                                      :rel                 "protocol"
+                                                                                     :inverse_rel         "procedures"
                                                                                      :collaboration_roots (:experimentIds d)}] []))}
 
                                :named_links {;; Per link, list of added. EXCLUDES _collaboration_roots
@@ -80,6 +81,7 @@
                                              :protocol (fn [d] (if (:protocol d) [{:source_id           (:_id d)
                                                                                    :target_id           (:protocol d)
                                                                                    :rel                 "protocol"
+                                                                                   :inverse_rel         "procedures"
                                                                                    :collaboration_roots (:experimentIds d)}] []))}
 
                                :named_links {:inputs  (util/named-targets :inputs "inputs")
@@ -110,4 +112,69 @@
                                :links       {:owner owner-link}
 
                                :named_links {}}
+
+             "EpochGroup"     {:attributes  {;; v3 <- v2
+                                             :label               :label
+                                             :start               :start
+                                             :start_zone          :startZone
+                                             :protocol_parameters (util/parameters :protocolParameters)
+                                             :device_parameters   (util/parameters :deviceParameters)
+                                             }
+                               :links       {;; Per link, list of added.
+                                             :owner    owner-link
+                                             :parent   (fn [d] [{:source_id           (:_id d)
+                                                                 :target_id           (:parent d)
+                                                                 :rel                 "parent"
+                                                                 :collaboration_roots (:experimentIds d)}])
+                                             :protocol (fn [d] (if (:protocol d) [{:source_id           (:_id d)
+                                                                                   :target_id           (:protocol d)
+                                                                                   :rel                 "protocol"
+                                                                                   :inverse_rel         "procedures"
+                                                                                   :collaboration_roots (:experimentIds d)}] []))}
+
+                               :named_links {}}
+
+             "Protocol" {:attributes {:name :name
+                                      :protocol_document :protocolDocument
+                                      :code_repository :scmUrl
+                                      :code_function :functionName
+                                      :code_revision :scmRevision}
+
+                         :links {:owner    owner-link}
+                         :named_links {}}
+
+             ;"Measurement" {}
+             ;"Experiment" {}
+             ;"Project" {}
              })
+
+
+;public static final String NAME = "name";
+;public static final String PROTOCOL_DOCUMENT = "protocol_document";
+;
+;public static final String CODE_FUNCTION = "code_function";
+;public static final String CODE_SCM_URL = "code_repository";
+;public static final String CODE_REVISION = "code_revision";
+
+;
+;;{
+;"_id": "11b13d33-9fad-4612-ba0d-5d5a5dfa85b6",
+;"_rev": "28-6f87c10d3f5bc4ca1bc81b3e587ec60a",
+;"name": "fenton-analysis-protocol-demo",
+;"entity": true,
+;"scmUrl": "https://github.com/FentonLab/analysis-code",
+;"version": "2.0-beta6",
+;"writeGroupIds": [],
+;"protocolDocument": "Automated analysis",
+;"experimentIds": [
+;                  "aeb7ad18-e491-4438-96a3-2b8a5ff60399"
+;                  ],
+;"projectIds": [
+;               "fabd0d84-ccb1-4dde-a4c8-bd0915d25bbf"
+;               ],
+;"scmRevision": "TBD",
+;"type": "Protocol",
+;"ownerUuid": "d4ceca40-83cb-0130-3b75-22000aab13b3",
+;"resources": [],
+;"functionName": "analysis_entry_function"
+;  }
