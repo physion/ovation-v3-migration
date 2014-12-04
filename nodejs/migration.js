@@ -56,18 +56,22 @@ Cloudant({account:me, password:password}, function(er, cloudant) {
         cloudant.db.create(new_db_name, function(err) {
           // TODO Figure out if we want to quit if the db already exists or not (they all do right now because I've run the script :)
           if (err) {
-            console.log("ERROR - creating database: " + new_db_name + " - " + err);
-            //process.exit(1);
+            if(err.status_code != 412) {
+              console.log("ERROR - creating database: " + new_db_name + " - " + err);
+            }
           }
+        });
 
-          var new_db = cloudant.use(new_db_name);
+        var new_db = cloudant.use(new_db_name);
 
-          old_db.list(function(err, body) {
-            if (!err) {
-              body.rows.forEach(function(doc) {
-                //console.log(doc);
+        old_db.list({"include_docs": true}, function(err, body) {
+          if (!err) {
+            body.rows.forEach(function(doc) {
 
-                var new_docs = v3.migration.node.migrate(doc);
+              if(doc.id.indexOf("_design") != 0) {               //skip _design docs
+
+                var new_docs = v3.migration.node.migrate(doc.doc);
+
                 var doc_ids = "[";
                 for(var i = 0; i<new_docs.length; i++) {
                  doc_ids += ", " + new_docs[i]["_id"];
@@ -82,10 +86,11 @@ Cloudant({account:me, password:password}, function(er, cloudant) {
 
                   console.log("MIGRATE: " + doc_ids)
                 });
-              });
-            }
-          });
+              }
+            });
+          }
         });
+
       }
     });
   });

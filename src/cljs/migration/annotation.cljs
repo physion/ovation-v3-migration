@@ -48,3 +48,8 @@
                          "notes" (:notes doc-v2)
                          "start" (:start doc-v2)
                          "end"   (:end doc-v2)})))
+
+
+(defmethod convert-annotation nil
+  [doc-v2]
+  (print "Unknown document: " doc-v2))

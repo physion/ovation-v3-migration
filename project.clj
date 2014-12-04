@@ -28,9 +28,11 @@
                                                    :notify-command ["node_modules/phantomjs/lib/phantom/bin/phantomjs" "bin/speclj" "target/main/migration-node-dev.js"]}
                                         :node     {:source-paths ["src/cljs"]
                                                    :compiler     {:output-to     "target/main/migration-node.js"
+                                                                  :output-dir       "target/main"
                                                                   :optimizations :simple
                                                                   :target        :nodejs
-                                                                  :pretty-print  true}}}
+                                                                  :pretty-print  true
+                                                                  :source-map    "target/main/migration-node.js.map"}}}
 
                         :test-commands {"test" ["node_modules/phantomjs/lib/phantom/bin/phantomjs" "bin/speclj" "target/main/compiled.js"]}}
             )

@@ -42,11 +42,9 @@
     (flatten [(conj base attributes collab trash) (convert-links doc migration)])))
 
 
-(defmulti convert :entity)
-(defmethod convert false
-  [annotation-doc]
-  (conj '() (annotation/convert-annotation annotation-doc)))
+(defn convert
+  [doc]
 
-(defmethod convert true
-  [entity-doc]
-  (convert-entity entity-doc))
+  (if (some #{(:type doc)} (keys mapping/v2->v3))
+    (convert-entity doc)
+    (conj '() (annotation/convert-annotation doc))))
