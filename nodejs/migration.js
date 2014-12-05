@@ -11,6 +11,26 @@ var dbs = process.argv[2];
 var me = process.argv[3];
 var password = process.argv[4];
 
+var saveDocs = function(new_docs) {
+  var doc_ids = "[";
+   for(var i = 0; i<new_docs.length; i++) {
+    doc_ids += new_docs[i]["_id"];
+    if(i < new_docs.length - 1) {
+      doc_ids += ", ";
+    }
+   }
+   doc_ids += "]";
+
+   new_db.bulk({'docs' : new_docs}, function(err, body, header) {
+     if (err) {
+       console.log("ERROR - inserting documents " + doc_ids + " - " + err);
+       process.exit(1);
+     }
+
+     console.log("MIGRATE: " + doc_ids + " to " + new_db.config.db)
+   });
+}
+
 Cloudant({account:me, password:password}, function(er, cloudant) {
   if (er) {
     return console.log('Error connecting to Cloudant account %s: %s', me, er.message);
@@ -74,30 +94,23 @@ Cloudant({account:me, password:password}, function(er, cloudant) {
                    if(doc.id.indexOf("_design") != 0) {               //skip _design docs
 
                      if(doc.doc.version === 3) {
-                       new_docs = [doc.doc];
+                       saveDocs([doc.doc]);
                      } else {
 //                       console.log("Converting " + doc.doc._id + " (" + db_name + ")");
-                       new_docs = v3.migration.node.migrate(doc.doc);
+                        if(doc.doc.type && doc.doc.type === "Source") {
+                          // see if this is a parent
+                          old_db.view('EntityBase', 'parent_sources', {"keys" : [doc.doc._id]}, function(err, body) {
+                              if(err) {
+                                console.log("ERROR - getting source parents " + doc.doc._id + " - " + err);
+                                process.exit(1);
+                              }
+
+                              console.log(body.rows.size());
+                          });
+                        } else {
+                          saveDocs(v3.migration.node.migrate(doc.doc));
+                        }
                      }
-
-
-                     var doc_ids = "[";
-                     for(var i = 0; i<new_docs.length; i++) {
-                      doc_ids += new_docs[i]["_id"];
-                      if(i < new_docs.length - 1) {
-                        doc_ids += ", ";
-                      }
-                     }
-                     doc_ids += "]";
-
-                     new_db.bulk({'docs' : new_docs}, function(err, body, header) {
-                       if (err) {
-                         console.log("ERROR - inserting documents " + doc_ids + " - " + err);
-                         process.exit(1);
-                       }
-
-                       console.log("MIGRATE: " + doc_ids + " to " + new_db.config.db)
-                     });
                    }
                  });
                }
