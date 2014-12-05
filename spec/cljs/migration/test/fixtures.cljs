@@ -43,6 +43,22 @@
                     "entity"          true
                     })
 
+(def child-source {
+                   "_id"             "6fa3dad4-9f97-4d4a-aade-81fe67a8dfc0",
+                   "_rev"            "3-df1dcccb9abf5d20c866fd9e65f5ef17",
+                   "type"            "Source",
+                   "ownerUuid"       "60f860c0-5ed4-0132-eca8-22000a0b96d9",
+                   "writeGroupIds"   [],
+                   "resources"       [],
+                   "version"         "2.1.29",
+                   "label"           "child-1",
+                   "identifier"      "source2-child-1",
+                   "childrenSources" [],
+                   "experimentIds"   [],
+                   "projectIds"      [],
+                   "entity"          true
+                   })
+
 (def epoch {
             "_id"                "01ad0c48-39df-414d-ae20-615d39e393a9",
             "_rev"               "2-5cb8cff041e971b93bb5d38ecb2e0afd",

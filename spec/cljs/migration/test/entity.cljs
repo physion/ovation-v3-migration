@@ -19,7 +19,6 @@
               (let [doc (keywordize-keys epoch)]
                 (should= {
                           :_id         (:_id doc)
-                          :_rev        (:_rev doc)
                           :api_version mapping/api-version
                           :type        (:type doc)
                           :attributes  {:start               (:start doc)

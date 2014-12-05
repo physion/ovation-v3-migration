@@ -13,20 +13,20 @@
 
             :hooks [leiningen.cljsbuild]
 
-            :cljsbuild {:builds        {:dev      {:source-paths   ["src/cljs" "spec/cljs"]
+            :cljsbuild {:builds        {:dev      {:source-paths   ["src/main/cljs" "spec/cljs"]
                                                    :compiler       {:output-to    "target/main/migration-dev.js"
                                                                     :pretty-print true}
                                                    :notify-command ["node_modules/phantomjs/lib/phantom/bin/phantomjs" "bin/speclj" "target/main/migration-dev.js"]}
-                                        :prod     {:source-paths ["src/cljs"]
+                                        :prod     {:source-paths ["src/main/cljs"]
                                                    :compiler     {:output-to     "target/main/migration.js"
                                                                   :optimizations :simple
                                                                   :pretty-print  true}}
-                                        :node-dev {:source-paths   ["src/cljs" "spec/cljs"]
+                                        :node-dev {:source-paths   ["src/main/cljs" "spec/cljs" "src/node/cljs"]
                                                    :compiler       {:output-to     "target/main/migration-node-dev.js"
                                                                     :optimizations :simple
                                                                     :target        :nodejs}
                                                    :notify-command ["node_modules/phantomjs/lib/phantom/bin/phantomjs" "bin/speclj" "target/main/migration-node-dev.js"]}
-                                        :node     {:source-paths ["src/cljs"]
+                                        :node     {:source-paths ["src/main/cljs" "src/node/cljs"]
                                                    :compiler     {:output-to     "target/main/migration-node.js"
                                                                   :output-dir       "target/main"
                                                                   :optimizations :simple
