@@ -18,6 +18,7 @@
   "homepage": "https://github.com/physion/ovation-v3-migration",
   "dependencies": {
     "cloudant": "^1.0.0-beta3",
-    "phantomjs": "^1.9.12"
+    "phantomjs": "^1.9.12",
+    "lazy": "~1.0.11"
   }
 }

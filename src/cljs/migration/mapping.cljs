@@ -61,14 +61,14 @@
                                :named_links {}
                                }
 
-             "User"           {:attributes  (:attributes {;; v3 <- v2
-                                                          :name             :username
-                                                          :email            :email
-                                                          :password_hash    :passwordHash
-                                                          :hash_algorithm   :digestAlgorithm
-                                                          :pkcs5_iterations :pcks5Iterations
-                                                          :salt             :password_salt
-                                                          :pepper           :pepper})
+             "User"           {:attributes  {;; v3 <- v2
+                                             :name             :username
+                                             :email            :email
+                                             :password_hash    :passwordHash
+                                             :hash_algorithm   :digestAlgorithm
+                                             :pkcs5_iterations :pkcs5Iterations
+                                             :salt             :password_salt
+                                             :pepper           :pepper}
                                :links       {}
                                :named_links {}}
 
@@ -193,7 +193,7 @@
                                                                                  :collaboration_roots (:experimentIds d)}) (:projectIds d)))}
 
                                :named_links {
-                                             :write_groups [] ;; We haven't used write groups in v2
+                                             ;; We haven't used write groups in v2
                                              }}
              })
 

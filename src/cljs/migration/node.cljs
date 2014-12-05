@@ -5,7 +5,8 @@
 
 (defn ^:export migrate
   [doc]
-  (clj->js (stringify-keys (core/convert (keywordize-keys (js->clj doc))))))
+  (let [docs (core/convert (keywordize-keys (js->clj doc)))]
+    (clj->js (into [] (map (fn [doc] (clj->js (stringify-keys doc))) docs)))))
 
 (defn ^:export -main [] nil)
 
