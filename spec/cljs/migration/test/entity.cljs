@@ -4,46 +4,14 @@
             [migration.core :as m]
             [migration.util :as util]
             [clojure.walk :refer [keywordize-keys]]
-            [migration.mapping :as mapping]))
+            [migration.mapping :as mapping]
+            [migration.test.fixtures :refer [epoch]]))
 
 
 
 
 
-(def epoch {
-            "_id"                "01ad0c48-39df-414d-ae20-615d39e393a9",
-            "_rev"               "2-5cb8cff041e971b93bb5d38ecb2e0afd",
-            "type"               "Epoch",
-            "ownerUuid"          "8802f3e0-0b98-0132-451b-22000a0b96d9",
-            "writeGroupIds"      [],
-            "resources"          [],
-            "version"            "2.1.26",
-            "start"              "2014-09-14T14:11:03.885-04:00",
-            "end"                "2014-09-14T14:11:08.885-04:00",
-            "startZone"          "America/New_York",
-            "endZone"            "America/New_York",
-            "experiment"         "91047ab3-d4da-471d-9170-37f164a5a027",
-            "parent"             "91047ab3-d4da-471d-9170-37f164a5a027",
-            "inputSources"       [
-                                  {
-                                   "key"   "unit1",
-                                   "value" "00c66b67-1126-4cc0-af05-fd4ad188567f"}
-                                  ],
-            "outputSources"      [],
-            "protocolParameters" [{"key"   "injectionDate",
-                                   "value" "20130709"},
-                                  {"key"   "infectionCoordinates",
-                                   "value" "[[2.500, -1.500, .500], [2.500, -1.500, .8]]"}],
-            "deviceParameters"   [{"key"   "version",
-                                   "value" "20130709"},
-                                  ],
-            "projectIds"         [
-                                  "9c7066a8-4f22-42d9-82fe-43fec312fab2"
-                                  ],
-            "experimentIds"      [
-                                  "91047ab3-d4da-471d-9170-37f164a5a027"
-                                  ],
-            "entity"             true})
+
 
 
 (describe "Epoch conversion"
@@ -138,6 +106,12 @@
                                  :target_id   "00c66b67-1126-4cc0-af05-fd4ad188567f"
                                  :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
           )
+
+(describe "Source converstion"
+          (it "should mark root sources as root"
+              (should false))
+          (it "should not mark child sources as root"
+              (should false)))
 
 (describe "Trashed entities"
           (it "should migrate trash info"

@@ -41,8 +41,6 @@
                                                              :trash_root (str "ovation://entities/" (:trash_root info))}} {})]
 
 
-    (print migration "\n")
-    (print (conj base attributes collab trash) "\n")
     (flatten [(conj base attributes collab trash) (convert-links doc migration)])))
 
 
