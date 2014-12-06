@@ -4,9 +4,9 @@
 (defn convert-annotation-base
   [doc]
   {
-   "_rev"   (:_rev doc)
+   ;;"_rev"   (:_rev doc)
    "type"   "Annotation"
-   "links"  {util/collaboration-roots (:experimentIds doc)}
+   "links"  {util/collaboration-roots (util/collab-roots doc)}
    "user"   (util/make-entity-uri (:userId doc))
    "entity" (util/make-entity-uri (:entityId doc))
    "api_version" "3"

@@ -136,7 +136,24 @@
                                  :inverse_rel "containing_entity"
                                  :source_id   (:_id doc)
                                  :target_id   "939263e7-0fd9-438e-bcfb-7d7e83111fa8"
-                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc))))))
+                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
+
+          (it "should add annotation record for parent"
+              (let [doc (keywordize-keys analysis-record)
+                    docs (m/convert doc)]
+                (should (some #{{
+                                 :_id         "WHAT SHOULD THE ID BE?"
+                                 :type            "Annotation"
+                                 :api_version     "3"
+                                 :user            (util/make-entity-uri (:ownerUuid doc))
+                                 :entity          (util/make-entity-uri (:parent doc))
+                                 :annotation_type "analysis_records"
+                                 :annotation      {
+                                                   :uri (str "ovation://entities/" (:parent doc))
+                                                   }
+                                 :links           {:_collaboration_roots (util/collab-roots doc)}}} docs))))
+
+          )
 
 
 (describe "Trashed entities"

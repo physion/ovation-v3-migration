@@ -106,7 +106,7 @@
               ;"entity": "ovation://entities/49754fa6-df69-452e-8808-24e7d12c5bf6"
               (should= (let [doc (keywordize-keys (js->clj tag-annotation))]
                          {"_id"             (str "keywords_" (:_id doc))
-                          "_rev"            (:_rev doc)
+                          ;"_rev"            (:_rev doc)
                           "annotation"      {"tag" (:tag doc)}
                           "links"           {"_collaboration_roots" (:experimentIds doc)}
                           "type"            "Annotation"
@@ -135,7 +135,7 @@
                 ;"user": "ovation://entities/eae74740-5a98-0131-372a-22000a977b96"
 
                 (should= {"_id"             (str "properties_" (:_id doc))
-                          "_rev"            (:_rev doc)
+                          ;"_rev"            (:_rev doc)
                           "annotation"      {"key"   (:key doc)
                                              "value" (:value doc)}
                           "links"           {"_collaboration_roots" (:experimentIds doc)}
@@ -149,7 +149,7 @@
           (it "should convert note annotation"
               (let [doc (keywordize-keys (js->clj note-annotation))]
                 (should= {"_id"             (str "notes_" (:_id doc))
-                          "_rev"            (:_rev doc)
+                          ;"_rev"            (:_rev doc)
                           "annotation"      {"text"       (:text doc)
                                              "time_stamp" (:timestamp doc)}
                           "links"           {"_collaboration_roots" (:experimentIds doc)}
@@ -163,7 +163,7 @@
           (it "should convert timeline annotation"
               (let [doc (keywordize-keys (js->clj timeline-annotation))]
                 (should= {"_id"             (str "timeline_events_" (:_id doc))
-                                  "_rev"            (:_rev doc)
+                                  ;"_rev"            (:_rev doc)
                                   "annotation"      {"name"  (:name doc)
                                                      "notes" (:notes doc)
                                                      "start" (:start doc)
