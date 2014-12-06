@@ -5,7 +5,7 @@
             [migration.util :as util]
             [clojure.walk :refer [keywordize-keys]]
             [migration.mapping :as mapping]
-            [migration.test.fixtures :refer [epoch]]))
+            [migration.test.fixtures :refer [epoch measurement]]))
 
 
 
@@ -33,12 +33,12 @@
 
           (it "has owner relation"
               (let [doc (keywordize-keys epoch)]
-                (should (some #{{:_id         (str (:_id doc) "--owner-->" (:ownerUuid doc))
-                                 :type        "Relation"
-                                 :rel         "owner"
-                                 :source_id   (:_id doc)
-                                 :target_id   (:ownerUuid doc)
-                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
+                (should (some #{{:_id       (str (:_id doc) "--owner-->" (:ownerUuid doc))
+                                 :type      "Relation"
+                                 :rel       "owner"
+                                 :source_id (:_id doc)
+                                 :target_id (:ownerUuid doc)
+                                 :links     {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
 
           (it "has experiment relation"
               (let [doc (keywordize-keys epoch)]
@@ -84,25 +84,36 @@
 
           (it "has input source relations when present"
               (let [doc (keywordize-keys epoch)]
-                (should (some #{{:_id         (str (:_id doc) "--input_sources>unit1-->" "00c66b67-1126-4cc0-af05-fd4ad188567f")
-                                 :type        "Relation"
-                                 :rel         "input_sources"
-                                 :name        "unit1"
-                                 :source_id   (:_id doc)
-                                 :target_id   "00c66b67-1126-4cc0-af05-fd4ad188567f"
-                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
+                (should (some #{{:_id       (str (:_id doc) "--input_sources>unit1-->" "00c66b67-1126-4cc0-af05-fd4ad188567f")
+                                 :type      "Relation"
+                                 :rel       "input_sources"
+                                 :name      "unit1"
+                                 :source_id (:_id doc)
+                                 :target_id "00c66b67-1126-4cc0-af05-fd4ad188567f"
+                                 :links     {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
 
           (it "has output source relations when present"
               (let [doc (assoc (keywordize-keys epoch) :outputSources (:inputSources (keywordize-keys epoch)))]
-                (should (some #{{:_id         (str (:_id doc) "--output_sources>unit1-->" "00c66b67-1126-4cc0-af05-fd4ad188567f")
-                                 :type        "Relation"
-                                 :rel         "output_sources"
-                                 :name        "unit1"
-                                 :source_id   (:_id doc)
-                                 :target_id   "00c66b67-1126-4cc0-af05-fd4ad188567f"
-                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
+                (should (some #{{:_id       (str (:_id doc) "--output_sources>unit1-->" "00c66b67-1126-4cc0-af05-fd4ad188567f")
+                                 :type      "Relation"
+                                 :rel       "output_sources"
+                                 :name      "unit1"
+                                 :source_id (:_id doc)
+                                 :target_id "00c66b67-1126-4cc0-af05-fd4ad188567f"
+                                 :links     {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
 
           )
+
+(describe "Measurement conversion"
+          (it "should have data relation"
+              (let [doc (keywordize-keys measurement)]
+                (should (some #{{:_id         (str (:_id doc) "--data-->" (:data doc))
+                                 :type        "Relation"
+                                 :rel         "data"
+                                 :inverse_rel "containing_entity"
+                                 :source_id   (:_id doc)
+                                 :target_id   (:data doc)
+                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc))))))
 
 
 (describe "Trashed entities"

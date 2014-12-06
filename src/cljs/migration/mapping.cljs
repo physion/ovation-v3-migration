@@ -151,7 +151,7 @@
                                                               :inverse_rel         "measurements"
                                                               :collaboration_roots (:experimentIds d)}])
                                              :data  (fn [d] [{:source_id           (:_id d)
-                                                              :target_id           (:protocol d)
+                                                              :target_id           (:data d)
                                                               :rel                 "data"
                                                               :inverse_rel         "containing_entity"
                                                               :collaboration_roots (:experimentIds d)}])}

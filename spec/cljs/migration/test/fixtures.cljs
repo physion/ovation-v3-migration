@@ -93,3 +93,25 @@
                                   "91047ab3-d4da-471d-9170-37f164a5a027"
                                   ],
             "entity"             true})
+
+(def measurement {
+                  "_id"           "bc29eaba-de7b-466e-bdbb-df2d3e7195d8",
+                  "_rev"          "1-53dc88fb43f18cab27dcb2028765a473",
+                  "type"          "Measurement",
+                  "ownerUuid"     "60f860c0-5ed4-0132-eca8-22000a0b96d9",
+                  "writeGroupIds" [],
+                  "resources"     [],
+                  "version"       "2.1.29",
+                  "name"          "060810Bc2.jpg",
+                  "epoch"         "5f6178d3-9d99-4bf4-9e61-cb19cd2e1d43",
+                  "sourceNames"   [],
+                  "devices"       [],
+                  "data"          "43bb6579-653b-481a-a796-8720069a4983",
+                  "experimentIds" [
+                                   "cc0ffad5-f6f0-439b-a1c6-8ac6aeef794a"
+                                   ],
+                  "projectIds"    [
+                                   "b3ca6710-7d94-401f-aa0b-ca34d4050d51"
+                                   ],
+                  "entity"        true
+                  })
