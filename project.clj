@@ -13,8 +13,6 @@
 
             :hooks [leiningen.cljsbuild]
 
-            :source-paths ["src/main" "src/node"]
-
             :cljsbuild {:builds        {:dev      {:source-paths   ["src/cljs" "spec/cljs"]
                                                    :compiler       {:output-to    "target/main/migration-dev.js"
                                                                     :pretty-print true}

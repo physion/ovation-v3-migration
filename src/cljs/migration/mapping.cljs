@@ -41,10 +41,11 @@
 
                                              :output_sources (util/named-targets :outputSources "output_sources")}}
 
-             "Source"         {:attributes  {;; v3 <- v2
-                                             :label      :label
-                                             :identifier :identifier
-                                             :is_root    #(nil? (:parentEpoch %))}
+             "Source"         {:attributes {;; v3 <- v2
+                                            :label      :label
+                                            :identifier :identifier
+                                            :is_root    :is_root ;;#(nil? (:parentEpoch %))
+                                            }
                                :links       {;; Per link, list of added. EXCLUDES _collaboration_roots
                                              :owner               owner-link
                                              :children            (fn [d] (map (fn [child] {:source_id           (:_id d)

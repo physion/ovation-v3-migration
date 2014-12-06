@@ -36,7 +36,6 @@
                 (should (some #{{:_id         (str (:_id doc) "--owner-->" (:ownerUuid doc))
                                  :type        "Relation"
                                  :rel         "owner"
-                                 :inverse_rel nil
                                  :source_id   (:_id doc)
                                  :target_id   (:ownerUuid doc)
                                  :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
@@ -89,7 +88,6 @@
                                  :type        "Relation"
                                  :rel         "input_sources"
                                  :name        "unit1"
-                                 :inverse_rel nil
                                  :source_id   (:_id doc)
                                  :target_id   "00c66b67-1126-4cc0-af05-fd4ad188567f"
                                  :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
@@ -100,17 +98,12 @@
                                  :type        "Relation"
                                  :rel         "output_sources"
                                  :name        "unit1"
-                                 :inverse_rel nil
                                  :source_id   (:_id doc)
                                  :target_id   "00c66b67-1126-4cc0-af05-fd4ad188567f"
                                  :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
+
           )
 
-(describe "Source converstion"
-          (it "should mark root sources as root"
-              (should false))
-          (it "should not mark child sources as root"
-              (should false)))
 
 (describe "Trashed entities"
           (it "should migrate trash info"

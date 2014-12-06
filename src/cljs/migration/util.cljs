@@ -34,13 +34,17 @@
 (defn make-relation
   "Makes a relation given arguments map"
   [opts]
-  (let [{:keys [rel inverse_rel target_id source_id collaboration_roots]} opts]
-    (assoc rel-base :_id (make-rel-id source_id rel target_id)
-                    :rel rel
-                    :inverse_rel inverse_rel
-                    :target_id target_id
-                    :source_id source_id
-                    :links {:_collaboration_roots collaboration_roots})))
+  (let [{:keys [rel inverse_rel target_id source_id collaboration_roots]} opts
+        common (assoc rel-base :_id (make-rel-id source_id rel target_id)
+                               :rel rel
+                               :target_id target_id
+                               :source_id source_id
+                               :links {:_collaboration_roots collaboration_roots})]
+
+    ;; Add inverse_rel only if present
+    (if inverse_rel
+      (assoc common :inverse_rel inverse_rel)
+      common)))
 
 
 (defn make-named-rel-id

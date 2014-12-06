@@ -1,4 +1,4 @@
-(ns node.migration.node
+(ns migration.node
   (:require [migration.core :as core]
             [clojure.walk :refer [keywordize-keys stringify-keys]]
             [cljs.nodejs :as nodejs]))

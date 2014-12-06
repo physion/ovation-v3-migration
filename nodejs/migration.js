@@ -11,7 +11,7 @@ var dbs = process.argv[2];
 var me = process.argv[3];
 var password = process.argv[4];
 
-var saveDocs = function(new_docs) {
+var saveDocs = function(new_db, new_docs) {
   var doc_ids = "[";
    for(var i = 0; i<new_docs.length; i++) {
     doc_ids += new_docs[i]["_id"];
@@ -94,9 +94,10 @@ Cloudant({account:me, password:password}, function(er, cloudant) {
                    if(doc.id.indexOf("_design") != 0) {               //skip _design docs
 
                      if(doc.doc.version === 3) {
-                       saveDocs([doc.doc]);
+                       saveDocs(new_db, [doc.doc]);
                      } else {
-//                       console.log("Converting " + doc.doc._id + " (" + db_name + ")");
+
+                        // we have to treat Sources specially so that they get is_root
                         if(doc.doc.type && doc.doc.type === "Source") {
                           // see if this is a parent
                           old_db.view('EntityBase', 'parent_sources', {"keys" : [doc.doc._id]}, function(err, body) {
@@ -105,10 +106,16 @@ Cloudant({account:me, password:password}, function(er, cloudant) {
                                 process.exit(1);
                               }
 
-                              console.log(body.rows.size());
+                              if(body.rows.length == 0) {
+                                doc.doc.is_root = true;
+                              } else {
+                                doc.doc.is_root = false;
+                              }
+
+                              saveDocs(new_db, v3.migration.node.migrate(doc.doc));
                           });
                         } else {
-                          saveDocs(v3.migration.node.migrate(doc.doc));
+                          saveDocs(new_db, v3.migration.node.migrate(doc.doc));
                         }
                      }
                    }
