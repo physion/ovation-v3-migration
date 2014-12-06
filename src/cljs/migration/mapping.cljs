@@ -167,11 +167,12 @@
                                              }
                                :links       {;; Per link, list of added.
                                              :owner           owner-link
-                                             :equipment_setup (fn [d] [{:source_id           (:_id d)
-                                                                        :target_id           (:equipmentSetup d)
-                                                                        :rel                 "equipment_setup"
-                                                                        :inverse_rel         "experiments"
-                                                                        :collaboration_roots (:experimentIds d)}])
+                                             :equipment_setup (fn [d] (if (:equipmentSetup d) [{:source_id           (:_id d)
+                                                                                                :target_id           (:equipmentSetup d)
+                                                                                                :rel                 "equipment_setup"
+                                                                                                :inverse_rel         "experiments"
+                                                                                                :collaboration_roots (:experimentIds d)}]
+                                                                                              []))
                                              :projects        (fn [d] (map (fn [child] {:source_id           (:_id d)
                                                                                         :target_id           child
                                                                                         :rel                 "projects"
