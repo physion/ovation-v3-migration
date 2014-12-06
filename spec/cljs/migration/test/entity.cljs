@@ -127,7 +127,16 @@
                                  :source_id   (:_id doc)
                                  :target_id   "e5e28d4c-0eb5-4f96-a1a0-5d90feec66a2"
                                  :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
-          )
+          (it "should have outputs relation"
+              (let [doc (keywordize-keys analysis-record)]
+                (should (some #{{:_id         (str (:_id doc) "--outputs>analysis.mat-->" "939263e7-0fd9-438e-bcfb-7d7e83111fa8")
+                                 :type        "Relation"
+                                 :rel         "outputs"
+                                 :name        "analysis.mat"
+                                 :inverse_rel "containing_entity"
+                                 :source_id   (:_id doc)
+                                 :target_id   "939263e7-0fd9-438e-bcfb-7d7e83111fa8"
+                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc))))))
 
 
 (describe "Trashed entities"
