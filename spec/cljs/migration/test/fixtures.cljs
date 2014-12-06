@@ -115,3 +115,34 @@
                                    ],
                   "entity"        true
                   })
+
+(def analysis-record {
+                      "_id"                "dd093f65-9b93-48d8-90cd-962d2465afe9",
+                      "_rev"               "1-24cc98d76b9da301832d2c5c6c615f9b",
+                      "type"               "AnalysisRecord",
+                      "ownerUuid"          "60f860c0-5ed4-0132-eca8-22000a0b96d9",
+                      "writeGroupIds"      [],
+                      "resources"          [],
+                      "version"            "2.1.29",
+                      "name"               "New Analysis",
+                      "parent"             "754ad68a-fe0c-4bd7-99c8-24689d929a45",
+                      "protocolParameters" [],
+                      "inputs"             [
+                                            {
+                                             "key"   "example.xlsx_1",
+                                             "value" "e5e28d4c-0eb5-4f96-a1a0-5d90feec66a2"},
+                                            {
+                                             "key"   "060810Bc2.jpg_1",
+                                             "value" "83d9ee39-c423-4675-82f0-62fafd8e38cc"}],
+                      "outputs"            [
+                                            {
+                                             "key"   "analysis.mat",
+                                             "value" "939263e7-0fd9-438e-bcfb-7d7e83111fa8"}],
+                      "experimentIds"      [
+                                            "a1abbed9-7078-4be9-895e-7d0c4a9d9ecd"
+                                            ],
+                      "projectIds"         [
+                                            "b3ca6710-7d94-401f-aa0b-ca34d4050d51"
+                                            ],
+                      "entity"             true
+                      })

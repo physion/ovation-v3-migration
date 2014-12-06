@@ -5,7 +5,7 @@
             [migration.util :as util]
             [clojure.walk :refer [keywordize-keys]]
             [migration.mapping :as mapping]
-            [migration.test.fixtures :refer [epoch measurement]]))
+            [migration.test.fixtures :refer [epoch measurement analysis-record]]))
 
 
 
@@ -113,7 +113,21 @@
                                  :inverse_rel "containing_entity"
                                  :source_id   (:_id doc)
                                  :target_id   (:data doc)
-                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc))))))
+                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
+          )
+
+(describe "Analysis Record conversion"
+          (it "should have inputs relation"
+              (let [doc (keywordize-keys analysis-record)]
+                (should (some #{{:_id         (str (:_id doc) "--inputs>example.xlsx_1-->" "e5e28d4c-0eb5-4f96-a1a0-5d90feec66a2")
+                                 :type        "Relation"
+                                 :rel         "inputs"
+                                 :name        "example.xlsx_1"
+                                 :inverse_rel "analyses"
+                                 :source_id   (:_id doc)
+                                 :target_id   "e5e28d4c-0eb5-4f96-a1a0-5d90feec66a2"
+                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
+          )
 
 
 (describe "Trashed entities"

@@ -68,11 +68,14 @@
 
 (defn named-targets
   "mapping helper for input/output sources (and other key/value named relationships)"
-  [key rel]
+  [key rel & [inverse_rel]]
   (fn [doc]
-    (map (fn [src] {:source_id           (:_id doc)
-                    :target_id           (:value src)
-                    :name                (:key src)
-                    :rel                 rel
-                    :collaboration_roots (:experimentIds doc)})
+    (map (fn [src] (let [rel-doc {:source_id           (:_id doc)
+                              :target_id           (:value src)
+                              :name                (:key src)
+                              :rel                 rel
+                              :collaboration_roots (:experimentIds doc)}]
+                     (if inverse_rel
+                       (assoc rel-doc :inverse_rel inverse_rel)
+                       rel-doc)))
          (key doc))))

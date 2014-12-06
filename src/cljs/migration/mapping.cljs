@@ -85,9 +85,9 @@
                                                                  :collaboration_roots (:experimentIds d)}])
                                              :protocol protocol-link}
 
-                               :named_links {:inputs  (util/named-targets :inputs "inputs")
+                               :named_links {:inputs  (util/named-targets :inputs "inputs" "analyses")
 
-                                             :outputs (util/named-targets :outputs "outputs")
+                                             :outputs (util/named-targets :outputs "outputs" "containing_entity")
                                              }}
 
              "Resource"       {:attributes  {;; v3 <- v2
