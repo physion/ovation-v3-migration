@@ -18,7 +18,7 @@
   [doc-v2]
   (let [base (convert-annotation-base doc-v2)]
     (assoc base
-           "_id" (str "keywords_" (:_id doc-v2))
+           "_id" (str "keywords_" (util/random-uuid))
            "annotation_type" "keywords"
            "annotation" {"tag" (:tag doc-v2)})))
 
@@ -26,7 +26,7 @@
   [doc-v2]
   (let [base (convert-annotation-base doc-v2)]
     (assoc base
-           "_id" (str "properties_" (:_id doc-v2))
+           "_id" (str "properties_" (util/random-uuid))
            "annotation_type" "properties"
            "annotation" {"key"   (:key doc-v2)
                          "value" (:value doc-v2)})))
@@ -34,7 +34,7 @@
   [doc-v2]
   (let [base (convert-annotation-base doc-v2)]
     (assoc base
-           "_id" (str "notes_" (:_id doc-v2))
+           "_id" (str "notes_" (util/random-uuid))
            "annotation_type" "notes"
            "annotation" {"text"       (:text doc-v2)
                          "time_stamp" (:timestamp doc-v2)})))
@@ -42,7 +42,7 @@
   [doc-v2]
   (let [base (convert-annotation-base doc-v2)]
     (assoc base
-           "_id" (str "timeline_events_" (:_id doc-v2))
+           "_id" (str "timeline_events_" (util/random-uuid))
            "annotation_type" "timeline_events"
            "annotation" {"name"  (:name doc-v2)
                          "notes" (:notes doc-v2)

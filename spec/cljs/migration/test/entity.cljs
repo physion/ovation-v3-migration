@@ -1,5 +1,5 @@
 (ns migration.test.entity-spec
-  (:require-macros [speclj.core :refer [describe it should should= should-not run-specs]])
+  (:require-macros [speclj.core :refer [describe it should should= should-not should-contain should-not-contain run-specs]])
   (:require [speclj.core]
             [migration.core :as m]
             [migration.util :as util]
@@ -140,18 +140,19 @@
 
           (it "should add annotation record for parent"
               (let [doc (keywordize-keys analysis-record)
+                    random-uuid-str (util/random-uuid)
                     docs (m/convert doc)]
-                (should (some #{{
-                                 :_id         "WHAT SHOULD THE ID BE?"
-                                 :type            "Annotation"
-                                 :api_version     "3"
-                                 :user            (util/make-entity-uri (:ownerUuid doc))
-                                 :entity          (util/make-entity-uri (:parent doc))
-                                 :annotation_type "analysis_records"
-                                 :annotation      {
-                                                   :uri (str "ovation://entities/" (:parent doc))
-                                                   }
-                                 :links           {:_collaboration_roots (util/collab-roots doc)}}} docs))))
+                (with-redefs [util/random-uuid (fn [] random-uuid-str)]
+                             (should-contain {:_id             (str "analysis_records_" random-uuid-str)
+                                              :type            "Annotation"
+                                              :api_version     "3"
+                                              :user            (util/make-entity-uri (:ownerUuid doc))
+                                              :entity          (util/make-entity-uri (:parent doc))
+                                              :annotation_type "analysis_records"
+                                              :annotation      {
+                                                                :uri (str "ovation://entities/" (:parent doc))
+                                                                }
+                                              :links           {:_collaboration_roots (util/collab-roots doc)}} docs))))
 
           )
 

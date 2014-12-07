@@ -43,11 +43,11 @@
 
                                              :output_sources (util/named-targets :outputSources "output_sources")}}
 
-             "Source"         {:attributes {;; v3 <- v2
-                                            :label      :label
-                                            :identifier :identifier
-                                            :is_root    :is_root ;; Provided by migration.js harness after call to _design/EntityBase/parent_sources. Was #(nil? (:parentEpoch %))
-                                            }
+             "Source"         {:attributes  {;; v3 <- v2
+                                             :label      :label
+                                             :identifier :identifier
+                                             :is_root    :is_root ;; Provided by migration.js harness after call to _design/EntityBase/parent_sources. Was #(nil? (:parentEpoch %))
+                                             }
                                :links       {;; Per link, list of added. EXCLUDES _collaboration_roots
                                              :owner               owner-link
                                              :children            (fn [d] (map (fn [child] {:source_id           (:_id d)
@@ -89,14 +89,14 @@
                                                                  :collaboration_roots (util/collab-roots d)}
 
                                                                 ;; Annotation document
-                                                                {
-                                                                 :type   "Annotation"
-                                                                 :links  {:_collaboration_roots (util/collab-roots d)}
-                                                                 :user   (util/make-entity-uri (:ownerUuid d))
-                                                                 :entity (util/make-entity-uri (:parent d))
-                                                                 :api_version "3"
+                                                                {:_id             (str "analysis_records_" (util/random-uuid))
+                                                                 :type            "Annotation"
+                                                                 :links           {:_collaboration_roots (util/collab-roots d)}
+                                                                 :user            (util/make-entity-uri (:ownerUuid d))
+                                                                 :entity          (util/make-entity-uri (:parent d))
+                                                                 :api_version     "3"
                                                                  :annotation_type "analysis_records"
-                                                                 :annotation { :uri (str "ovation://entities/" (:parent d))}
+                                                                 :annotation      {:uri (str "ovation://entities/" (:parent d))}
                                                                  }])
                                              :protocol protocol-link}
 
@@ -113,7 +113,7 @@
                                              :supporting_file_urls :supportingFiles
                                              }
 
-                               :links       {:owner             owner-link}
+                               :links       {:owner owner-link}
 
                                :named_links {}}
 
@@ -202,7 +202,7 @@
                                              :name    :name
                                              }
                                :links       {;; Per link, list of added.
-                                             :owner    owner-link}
+                                             :owner owner-link}
 
                                :named_links {
                                              ;; We haven't used write groups in v2
