@@ -35,6 +35,7 @@
               (let [doc (keywordize-keys epoch)]
                 (should (some #{{:_id       (str (:_id doc) "--owner-->" (:ownerUuid doc))
                                  :type      "Relation"
+                                 :api_version "3"
                                  :rel       "owner"
                                  :source_id (:_id doc)
                                  :target_id (:ownerUuid doc)
@@ -44,6 +45,7 @@
               (let [doc (keywordize-keys epoch)]
                 (should (some #{{:_id         (str (:_id doc) "--experiment-->" (:experiment doc))
                                  :type        "Relation"
+                                 :api_version "3"
                                  :rel         "experiment"
                                  :inverse_rel "epochs"
                                  :source_id   (:_id doc)
@@ -55,6 +57,7 @@
               (let [doc (keywordize-keys epoch)]
                 (should (some #{{:_id         (str (:_id doc) "--parent-->" (:parent doc))
                                  :type        "Relation"
+                                 :api_version "3"
                                  :rel         "parent"
                                  :inverse_rel "epochs"
                                  :source_id   (:_id doc)
@@ -65,6 +68,7 @@
               (let [doc (keywordize-keys epoch)]
                 (should (not (some #{{:_id         (str (:_id doc) "--protocol-->" (:protocol doc))
                                       :type        "Relation"
+                                      :api_version "3"
                                       :rel         "protocol"
                                       :inverse_rel "procedures"
                                       :source_id   (:_id doc)
@@ -75,6 +79,7 @@
               (let [doc (keywordize-keys (assoc epoch "protocol" "91047ab3-d4da-471d-9170-37f164a5a027"))]
                 (should (some #{{:_id         (str (:_id doc) "--protocol-->" (:protocol doc))
                                  :type        "Relation"
+                                 :api_version "3"
                                  :rel         "protocol"
                                  :inverse_rel "procedures"
                                  :source_id   (:_id doc)
@@ -86,6 +91,7 @@
               (let [doc (keywordize-keys epoch)]
                 (should (some #{{:_id       (str (:_id doc) "--input_sources>unit1-->" "00c66b67-1126-4cc0-af05-fd4ad188567f")
                                  :type      "Relation"
+                                 :api_version "3"
                                  :rel       "input_sources"
                                  :name      "unit1"
                                  :source_id (:_id doc)
@@ -96,6 +102,7 @@
               (let [doc (assoc (keywordize-keys epoch) :outputSources (:inputSources (keywordize-keys epoch)))]
                 (should (some #{{:_id       (str (:_id doc) "--output_sources>unit1-->" "00c66b67-1126-4cc0-af05-fd4ad188567f")
                                  :type      "Relation"
+                                 :api_version "3"
                                  :rel       "output_sources"
                                  :name      "unit1"
                                  :source_id (:_id doc)
@@ -110,6 +117,7 @@
                 (should (some #{{:_id         (str (:_id doc) "--data-->" (:data doc))
                                  :type        "Relation"
                                  :rel         "data"
+                                 :api_version "3"
                                  :inverse_rel "containing_entity"
                                  :source_id   (:_id doc)
                                  :target_id   (:data doc)
@@ -121,6 +129,7 @@
               (let [doc (keywordize-keys analysis-record)]
                 (should (some #{{:_id         (str (:_id doc) "--inputs>example.xlsx_1-->" "e5e28d4c-0eb5-4f96-a1a0-5d90feec66a2")
                                  :type        "Relation"
+                                 :api_version "3"
                                  :rel         "inputs"
                                  :name        "example.xlsx_1"
                                  :inverse_rel "analyses"
@@ -131,6 +140,7 @@
               (let [doc (keywordize-keys analysis-record)]
                 (should (some #{{:_id         (str (:_id doc) "--outputs>analysis.mat-->" "939263e7-0fd9-438e-bcfb-7d7e83111fa8")
                                  :type        "Relation"
+                                 :api_version "3"
                                  :rel         "outputs"
                                  :name        "analysis.mat"
                                  :inverse_rel "containing_entity"

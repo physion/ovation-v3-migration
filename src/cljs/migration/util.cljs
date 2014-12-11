@@ -2,6 +2,8 @@
   (:require [cljs-uuid.core :as uuid]))
 
 (def collaboration-roots "_collaboration_roots")
+(def api-version 3)
+
 
 (defn collab-roots
   "Experiment Ids or project Ids if no experiments"
@@ -19,7 +21,8 @@
   [params]
   (into {} (map (fn [m] [(:key m) (:value m)]) params)))
 
-(def rel-base {:type "Relation"})
+(def rel-base {:type "Relation"
+               :api_version (str api-version)})
 
 (defn random-uuid
   "Generates a pseudo-random UUID, returning its string form"

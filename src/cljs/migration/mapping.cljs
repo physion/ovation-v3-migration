@@ -1,7 +1,7 @@
 (ns migration.mapping
   (:require [migration.util :as util]))
 
-(def api-version 3)
+(def api-version util/api-version)
 
 (def owner-link (fn [d] [{:source_id           (:_id d)
                           :target_id           (:ownerUuid d)
