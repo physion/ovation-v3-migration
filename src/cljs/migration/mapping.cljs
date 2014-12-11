@@ -6,13 +6,15 @@
 (def owner-link (fn [d] [{:source_id           (:_id d)
                           :target_id           (:ownerUuid d)
                           :rel                 "owner"
-                          :collaboration_roots (:experimentIds d)}]))
+                          :collaboration_roots (util/collab-roots d)}]))
 
 (def protocol-link (fn [d] (if (:protocol d) [{:source_id           (:_id d)
                                                :target_id           (:protocol d)
                                                :rel                 "protocol"
                                                :inverse_rel         "procedures"
-                                               :collaboration_roots (:experimentIds d)}] [])))
+                                               :collaboration_roots (util/collab-roots d)}] [])))
+
+
 
 (def v2->v3 {"Epoch"          {:attributes  {;; v3 <- v2
                                              :start               :start
@@ -28,12 +30,12 @@
                                                                    :target_id           (:experiment d)
                                                                    :rel                 "experiment"
                                                                    :inverse_rel         "epochs"
-                                                                   :collaboration_roots (:experimentIds d)}])
+                                                                   :collaboration_roots (util/collab-roots d)}])
                                              :parent     (fn [d] [{:source_id           (:_id d)
                                                                    :target_id           (:parent d)
                                                                    :rel                 "parent"
                                                                    :inverse_rel         "epochs"
-                                                                   :collaboration_roots (:experimentIds d)}])
+                                                                   :collaboration_roots (util/collab-roots d)}])
                                              :protocol   protocol-link}
 
                                :named_links {;; Per link, list of added. EXCLUDES _collaboration_roots
@@ -44,31 +46,32 @@
              "Source"         {:attributes  {;; v3 <- v2
                                              :label      :label
                                              :identifier :identifier
-                                             :is_root    #(nil? (:parentEpoch %))}
+                                             :is_root    :is_root ;; Provided by migration.js harness after call to _design/EntityBase/parent_sources. Was #(nil? (:parentEpoch %))
+                                             }
                                :links       {;; Per link, list of added. EXCLUDES _collaboration_roots
                                              :owner               owner-link
                                              :children            (fn [d] (map (fn [child] {:source_id           (:_id d)
                                                                                             :target_id           child
                                                                                             :rel                 "children"
                                                                                             :inverse_rel         "parents"
-                                                                                            :collaboration_roots (:experimentIds d)}) (:childrenSources d)))
+                                                                                            :collaboration_roots (util/collab-roots d)}) (:childrenSources d)))
 
                                              :producing_procedure (fn [d] (if-let [epoch (:parentEpoch d)] [{:source_id           (:_id d)
                                                                                                              :target_id           epoch
                                                                                                              :rel                 "producing_procedure"
-                                                                                                             :collaboration_roots (:experimentIds d)}]
+                                                                                                             :collaboration_roots (util/collab-roots d)}]
                                                                                                            []))}
                                :named_links {}
                                }
 
-             "User"           {:attributes  (:attributes {;; v3 <- v2
-                                                          :name             :username
-                                                          :email            :email
-                                                          :password_hash    :passwordHash
-                                                          :hash_algorithm   :digestAlgorithm
-                                                          :pkcs5_iterations :pcks5Iterations
-                                                          :salt             :password_salt
-                                                          :pepper           :pepper})
+             "User"           {:attributes  {;; v3 <- v2
+                                             :name             :username
+                                             :email            :email
+                                             :password_hash    :passwordHash
+                                             :hash_algorithm   :digestAlgorithm
+                                             :pkcs5_iterations :pkcs5Iterations
+                                             :salt             :password_salt
+                                             :pepper           :pepper}
                                :links       {}
                                :named_links {}}
 
@@ -78,15 +81,28 @@
                                              :device_parameters   (util/parameters :deviceParameters)
                                              }
                                :links       {:owner    owner-link
-                                             :parent   (fn [d] [{:source_id           (:_id d)
-                                                                 :target_id           (:experiment d)
+                                             :parent   (fn [d] [
+                                                                ;; Relation document
+                                                                {:source_id           (:_id d)
+                                                                 :target_id           (:parent d)
                                                                  :rel                 "parent"
-                                                                 :collaboration_roots (:experimentIds d)}])
+                                                                 :collaboration_roots (util/collab-roots d)}
+
+                                                                ;; Annotation document
+                                                                {:_id             (str "analysis_records_" (util/random-uuid))
+                                                                 :type            "Annotation"
+                                                                 :links           {:_collaboration_roots (util/collab-roots d)}
+                                                                 :user            (util/make-entity-uri (:ownerUuid d))
+                                                                 :entity          (util/make-entity-uri (:parent d))
+                                                                 :api_version     "3"
+                                                                 :annotation_type "analysis_records"
+                                                                 :annotation      {:uri (str "ovation://entities/" (:parent d))}
+                                                                 }])
                                              :protocol protocol-link}
 
-                               :named_links {:inputs  (util/named-targets :inputs "inputs")
+                               :named_links {:inputs  (util/named-targets :inputs "inputs" "analyses")
 
-                                             :outputs (util/named-targets :outputs "outputs")
+                                             :outputs (util/named-targets :outputs "outputs" "containing_entity")
                                              }}
 
              "Resource"       {:attributes  {;; v3 <- v2
@@ -97,7 +113,7 @@
                                              :supporting_file_urls :supportingFiles
                                              }
 
-                               :links       {:owner             owner-link}
+                               :links       {:owner owner-link}
 
                                :named_links {}}
 
@@ -122,7 +138,7 @@
                                                                  :target_id           (:parent d)
                                                                  :rel                 "parent"
                                                                  :inverse_rel         "epoch_groups"
-                                                                 :collaboration_roots (:experimentIds d)}])
+                                                                 :collaboration_roots (util/collab-roots d)}])
                                              :protocol protocol-link}
 
                                :named_links {}}
@@ -148,12 +164,12 @@
                                                               :target_id           (:epoch d)
                                                               :rel                 "epoch"
                                                               :inverse_rel         "measurements"
-                                                              :collaboration_roots (:experimentIds d)}])
+                                                              :collaboration_roots (util/collab-roots d)}])
                                              :data  (fn [d] [{:source_id           (:_id d)
-                                                              :target_id           (:protocol d)
+                                                              :target_id           (:data d)
                                                               :rel                 "data"
                                                               :inverse_rel         "containing_entity"
-                                                              :collaboration_roots (:experimentIds d)}])}
+                                                              :collaboration_roots (util/collab-roots d)}])}
 
                                :named_links {}}
 
@@ -166,16 +182,17 @@
                                              }
                                :links       {;; Per link, list of added.
                                              :owner           owner-link
-                                             :equipment_setup (fn [d] [{:source_id           (:_id d)
-                                                                        :target_id           (:equipmentSetup d)
-                                                                        :rel                 "equipment_setup"
-                                                                        :inverse_rel         "experiments"
-                                                                        :collaboration_roots (:experimentIds d)}])
+                                             :equipment_setup (fn [d] (if (:equipmentSetup d) [{:source_id           (:_id d)
+                                                                                                :target_id           (:equipmentSetup d)
+                                                                                                :rel                 "equipment_setup"
+                                                                                                :inverse_rel         "experiments"
+                                                                                                :collaboration_roots (util/collab-roots d)}]
+                                                                                              []))
                                              :projects        (fn [d] (map (fn [child] {:source_id           (:_id d)
                                                                                         :target_id           child
                                                                                         :rel                 "projects"
                                                                                         :inverse_rel         "experiments"
-                                                                                        :collaboration_roots (:experimentIds d)}) (:projectIds d)))
+                                                                                        :collaboration_roots (util/collab-roots d)}) (:projectIds d)))
                                              :protocol        protocol-link}
 
                                :named_links {}}
@@ -185,15 +202,10 @@
                                              :name    :name
                                              }
                                :links       {;; Per link, list of added.
-                                             :owner    owner-link
-                                             :projects (fn [d] (map (fn [child] {:source_id           (:_id d)
-                                                                                 :target_id           child
-                                                                                 :rel                 "projects"
-                                                                                 :inverse_rel         "experiments"
-                                                                                 :collaboration_roots (:experimentIds d)}) (:projectIds d)))}
+                                             :owner owner-link}
 
                                :named_links {
-                                             :write_groups [] ;; We haven't used write groups in v2
+                                             ;; We haven't used write groups in v2
                                              }}
              })
 

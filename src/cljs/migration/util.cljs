@@ -1,6 +1,14 @@
-(ns migration.util)
+(ns migration.util
+  (:require [cljs-uuid.core :as uuid]))
 
 (def collaboration-roots "_collaboration_roots")
+
+(defn collab-roots
+  "Experiment Ids or project Ids if no experiments"
+  [doc]
+  (if-let [expts (:experimentIds doc)]
+    expts
+    (:projectIds doc)))
 
 (defn make-entity-uri
   "Makes an ovation:// entity URI from a UUID string"
@@ -12,6 +20,11 @@
   (into {} (map (fn [m] [(:key m) (:value m)]) params)))
 
 (def rel-base {:type "Relation"})
+
+(defn random-uuid
+  "Generates a pseudo-random UUID, returning its string form"
+  []
+  (str (uuid/make-random)))
 
 (defn make-rel-id
   [source rel target]
@@ -34,13 +47,20 @@
 (defn make-relation
   "Makes a relation given arguments map"
   [opts]
-  (let [{:keys [rel inverse_rel target_id source_id collaboration_roots]} opts]
-    (assoc rel-base :_id (make-rel-id source_id rel target_id)
-                    :rel rel
-                    :inverse_rel inverse_rel
-                    :target_id target_id
-                    :source_id source_id
-                    :links {:_collaboration_roots collaboration_roots})))
+  (if (= (:type opts) "Annotation")
+    opts                                                    ;; annotation
+
+    (let [{:keys [rel inverse_rel target_id source_id collaboration_roots]} opts
+          common (assoc rel-base :_id (make-rel-id source_id rel target_id)
+                                 :rel rel
+                                 :target_id target_id
+                                 :source_id source_id
+                                 :links {:_collaboration_roots collaboration_roots})]
+
+      ;; Add inverse_rel only if present
+      (if inverse_rel
+        (assoc common :inverse_rel inverse_rel)
+        common))))
 
 
 (defn make-named-rel-id
@@ -64,11 +84,14 @@
 
 (defn named-targets
   "mapping helper for input/output sources (and other key/value named relationships)"
-  [key rel]
+  [key rel & [inverse_rel]]
   (fn [doc]
-    (map (fn [src] {:source_id           (:_id doc)
-                    :target_id           (:value src)
-                    :name                (:key src)
-                    :rel                 rel
-                    :collaboration_roots (:experimentIds doc)})
+    (map (fn [src] (let [rel-doc {:source_id           (:_id doc)
+                                  :target_id           (:value src)
+                                  :name                (:key src)
+                                  :rel                 rel
+                                  :collaboration_roots (:experimentIds doc)}]
+                     (if inverse_rel
+                       (assoc rel-doc :inverse_rel inverse_rel)
+                       rel-doc)))
          (key doc))))

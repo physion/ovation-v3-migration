@@ -1,5 +1,5 @@
 (ns migration.test.core-spec
-  (:require-macros [speclj.core :refer [describe it should should= should-not run-specs]])
+  (:require-macros [speclj.core :refer [describe it should should= should-not]])
   (:require [speclj.core]
             [migration.core :as m]
             [migration.util :as util]
@@ -104,17 +104,20 @@
               ;"type": "Annotation",
               ;"user": "ovation://entities/e7bf5920-4b3d-0132-5d38-22000a0b96d9",
               ;"entity": "ovation://entities/49754fa6-df69-452e-8808-24e7d12c5bf6"
-              (should= (let [doc (keywordize-keys (js->clj tag-annotation))]
-                         {"_id"             (str "keywords_" (:_id doc))
-                          "_rev"            (:_rev doc)
-                          "annotation"      {"tag" (:tag doc)}
-                          "links"           {"_collaboration_roots" (:experimentIds doc)}
-                          "type"            "Annotation"
-                          "annotation_type" "keywords"
-                          "api_version"     "3"
-                          "user"            (util/make-entity-uri (:userId doc))
-                          "entity"          (util/make-entity-uri (:entityId doc))})
-                       (first (m/convert (keywordize-keys (js->clj tag-annotation))))))
+              (let [random-uuid-str (util/random-uuid)]
+                (with-redefs [util/random-uuid (fn [] random-uuid-str)]
+
+                             (should= (let [doc (keywordize-keys (js->clj tag-annotation))]
+                                        {
+                                         "_id"             (str "keywords_" random-uuid-str)
+                                         "annotation"      {"tag" (:tag doc)}
+                                         "links"           {"_collaboration_roots" (:experimentIds doc)}
+                                         "type"            "Annotation"
+                                         "annotation_type" "keywords"
+                                         "api_version"     "3"
+                                         "user"            (util/make-entity-uri (:userId doc))
+                                         "entity"          (util/make-entity-uri (:entityId doc))})
+                                      (first (m/convert (keywordize-keys (js->clj tag-annotation))))))))
 
           (it "should convert property document"
               (let [doc (keywordize-keys (js->clj property-annotation))]
@@ -133,48 +136,53 @@
                 ;                                   ]
                 ;                                  ,
                 ;"user": "ovation://entities/eae74740-5a98-0131-372a-22000a977b96"
-
-                (should= {"_id"             (str "properties_" (:_id doc))
-                          "_rev"            (:_rev doc)
-                          "annotation"      {"key"   (:key doc)
-                                             "value" (:value doc)}
-                          "links"           {"_collaboration_roots" (:experimentIds doc)}
-                          "type"            "Annotation"
-                          "annotation_type" "properties"
-                          "api_version"     "3"
-                          "user"            (util/make-entity-uri (:userId doc))
-                          "entity"          (util/make-entity-uri (:entityId doc))}
-                         (first (m/convert (keywordize-keys (js->clj property-annotation)))))))
+                (let [random-uuid-str (util/random-uuid)]
+                  (with-redefs [util/random-uuid (fn [] random-uuid-str)]
+                               (should= {"_id"             (str "properties_" random-uuid-str)
+                                         ;"_rev"            (:_rev doc)
+                                         "annotation"      {"key"   (:key doc)
+                                                            "value" (:value doc)}
+                                         "links"           {"_collaboration_roots" (:experimentIds doc)}
+                                         "type"            "Annotation"
+                                         "annotation_type" "properties"
+                                         "api_version"     "3"
+                                         "user"            (util/make-entity-uri (:userId doc))
+                                         "entity"          (util/make-entity-uri (:entityId doc))}
+                                        (first (m/convert (keywordize-keys (js->clj property-annotation)))))))))
 
           (it "should convert note annotation"
-              (let [doc (keywordize-keys (js->clj note-annotation))]
-                (should= {"_id"             (str "notes_" (:_id doc))
-                          "_rev"            (:_rev doc)
-                          "annotation"      {"text"       (:text doc)
-                                             "time_stamp" (:timestamp doc)}
-                          "links"           {"_collaboration_roots" (:experimentIds doc)}
-                          "type"            "Annotation"
-                          "annotation_type" "notes"
-                          "api_version"     "3"
-                          "user"            (util/make-entity-uri (:userId doc))
-                          "entity"          (util/make-entity-uri (:entityId doc))}
-                         (first (m/convert (keywordize-keys (js->clj note-annotation)))))))
+              (let [doc (keywordize-keys (js->clj note-annotation))
+                    random-uuid-str (util/random-uuid)]
+                (with-redefs [util/random-uuid (fn [] random-uuid-str)]
+                             (should= {"_id"             (str "notes_" random-uuid-str)
+                                       ;"_rev"            (:_rev doc)
+                                       "annotation"      {"text"       (:text doc)
+                                                          "time_stamp" (:timestamp doc)}
+                                       "links"           {"_collaboration_roots" (:experimentIds doc)}
+                                       "type"            "Annotation"
+                                       "annotation_type" "notes"
+                                       "api_version"     "3"
+                                       "user"            (util/make-entity-uri (:userId doc))
+                                       "entity"          (util/make-entity-uri (:entityId doc))}
+                                      (first (m/convert (keywordize-keys (js->clj note-annotation))))))))
 
           (it "should convert timeline annotation"
-              (let [doc (keywordize-keys (js->clj timeline-annotation))]
-                (should= {"_id"             (str "timeline_events_" (:_id doc))
-                                  "_rev"            (:_rev doc)
-                                  "annotation"      {"name"  (:name doc)
-                                                     "notes" (:notes doc)
-                                                     "start" (:start doc)
-                                                     "end"   (:end doc)}
-                                  "links"           {"_collaboration_roots" (:experimentIds doc)}
-                                  "type"            "Annotation"
-                                  "annotation_type" "timeline_events"
-                                  "api_version"     "3"
-                                  "user"            (util/make-entity-uri (:userId doc))
-                                  "entity"          (util/make-entity-uri (:entityId doc))}
-                         (first (m/convert (keywordize-keys (js->clj timeline-annotation)))))))
+              (let [doc (keywordize-keys (js->clj timeline-annotation))
+                    random-uuid-str (util/random-uuid)]
+                (with-redefs [util/random-uuid (fn [] random-uuid-str)]
+                             (should= {"_id"             (str "timeline_events_" random-uuid-str)
+                                       ;"_rev"            (:_rev doc)
+                                       "annotation"      {"name"  (:name doc)
+                                                          "notes" (:notes doc)
+                                                          "start" (:start doc)
+                                                          "end"   (:end doc)}
+                                       "links"           {"_collaboration_roots" (:experimentIds doc)}
+                                       "type"            "Annotation"
+                                       "annotation_type" "timeline_events"
+                                       "api_version"     "3"
+                                       "user"            (util/make-entity-uri (:userId doc))
+                                       "entity"          (util/make-entity-uri (:entityId doc))}
+                                      (first (m/convert (keywordize-keys (js->clj timeline-annotation))))))))
           )
 
 

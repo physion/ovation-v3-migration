@@ -24,15 +24,17 @@
   [doc]
   (let [migration (mapping/v2->v3 (:type doc))
         base {:_id         (:_id doc)
-              :_rev        (:_rev doc)
+              ;:_rev        (:_rev doc)
               :type        (:type doc)
               :api_version mapping/api-version}
 
         attributes {:attributes (into {} (map (fn [[v3 v2]]
                                                 [v3 (v2 doc)]) (:attributes migration)))}
-        collab {:links {:_collaboration_roots (if (= (:type doc) "Project")
-                                                (:projectIds doc)
-                                                (:experimentIds doc))}}
+        roots (if (= (:type doc) "Project")
+                (:projectIds doc)
+                (:experimentIds doc))
+
+        collab (if roots {:links {:_collaboration_roots roots}} {})
 
         trash (if-let [info (:trash_info doc)] {:trash_info {:trashing_user (str "ovation://entities/" (:trashing_user info))
                                                              :trashing_date (:trashing_date info)
@@ -42,11 +44,9 @@
     (flatten [(conj base attributes collab trash) (convert-links doc migration)])))
 
 
-(defmulti convert :entity)
-(defmethod convert false
-  [annotation-doc]
-  (conj '() (annotation/convert-annotation annotation-doc)))
+(defn convert
+  [doc]
 
-(defmethod convert true
-  [entity-doc]
-  (convert-entity entity-doc))
+  (if (some #{(:type doc)} (keys mapping/v2->v3))
+    (convert-entity doc)
+    (conj '() (annotation/convert-annotation doc))))

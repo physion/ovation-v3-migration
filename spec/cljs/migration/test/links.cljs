@@ -105,6 +105,20 @@
                                                       :target_id           target
                                                       :collaboration_roots collab})
                                  [:links :_collaboration_roots]))))
+
+          (it "should omit inverse_rel if nil"
+              (let [rel "rel-name"
+                    inverse nil
+                    source "123-456"
+                    target "789-012"
+                    collab ["123", "456"]]
+
+                (should (not (contains? (util/make-relation {:rel                 rel
+                                                             :inverse_rel         inverse
+                                                             :source_id           source
+                                                             :target_id           target
+                                                             :collaboration_roots collab})
+                                        :inverse_rel)))))
           )
 
 
@@ -237,5 +251,22 @@
                                                             :name                name
                                                             :collaboration_roots collab})
                                  [:links :_collaboration_roots]))))
+
+
+          (it "should omit inverse_rel if nil"
+              (let [rel "rel-name"
+                    inverse nil
+                    source "123-456"
+                    target "789-012"
+                    collab ["123", "456"]
+                    name "namey"]
+
+                (should (not (contains? (util/make-named-relation {:rel                 rel
+                                                                   :inverse_rel         inverse
+                                                                   :source_id           source
+                                                                   :target_id           target
+                                                                   :name                name
+                                                                   :collaboration_roots collab})
+                                        :inverse_rel)))))
           )
 
