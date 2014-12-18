@@ -1,5 +1,6 @@
 (ns migration.util
-  (:require [cljs-uuid.core :as uuid]))
+  (:require [cljs-uuid.core :as uuid]
+            [cemerick.url :refer [url-encode]]))
 
 (def collaboration-roots "_collaboration_roots")
 (def api-version 3)
@@ -98,3 +99,8 @@
                        (assoc rel-doc :inverse_rel inverse_rel)
                        rel-doc)))
          (key doc))))
+
+
+(defn make-named-link-uri
+  [entity-id rel name]
+  (str "ovation://views/links?key=[%22ovation://entities/" entity-id "%22,%22" (url-encode rel) "%22,%22" (url-encode name) "%22]"))

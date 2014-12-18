@@ -28,6 +28,7 @@
                                         :protocol_parameters ((util/parameters :protocolParameters) doc)
                                         :device_parameters   ((util/parameters :deviceParameters) doc)}
                           :links       {:_collaboration_roots (:experimentIds doc)}
+                          :named_links {:input_sources {"unit1" {:uri (str "ovation://views/links?key=[%22ovation://entities/" (:_id doc) "%22,%22input_sources%22,%22unit1%22]")}}}
                           }
                          (first (m/convert doc (:ownerUuid doc))))))
 

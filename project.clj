@@ -2,7 +2,8 @@
             :description "v3-migration"
             :dependencies [[org.clojure/clojure "1.5.1"]
                            [org.clojure/clojurescript "0.0-2197"]
-                           [cljs-uuid "0.0.4"]]
+                           [cljs-uuid "0.0.4"]
+                           [com.cemerick/url "0.1.1"]]
 
             :plugins [[lein-cljsbuild "1.0.3"]
                       [lein-pprint "1.1.1"]
