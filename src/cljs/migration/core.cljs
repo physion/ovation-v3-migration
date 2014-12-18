@@ -54,7 +54,8 @@
                         entity-id (:source_id link)
                         uri (util/make-named-link-uri entity-id rel name)
                         ]
-                    (swap! named_links assoc-in [:named_links (keyword rel) name :uri] uri))) named_link_docs))
+                    (when (= entity-id (:_id doc))
+                      (swap! named_links assoc-in [:named_links (keyword rel) name :uri] uri)))) named_link_docs))
 
     (flatten [(conj base attributes collab trash @named_links) (convert-links doc migration)])))
 
