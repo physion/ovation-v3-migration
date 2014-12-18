@@ -38,15 +38,15 @@
 
         trash (if-let [info (:trash_info doc)] {:trash_info {:trashing_user (str "ovation://entities/" (:trashing_user info))
                                                              :trashing_date (:trashing_date info)
-                                                             :trash_root (str "ovation://entities/" (:trash_root info))}} {})]
+                                                             :trash_root    (str "ovation://entities/" (:trash_root info))}} {})]
 
 
     (flatten [(conj base attributes collab trash) (convert-links doc migration)])))
 
 
 (defn convert
-  [doc]
+  [doc user-id]
 
   (if (some #{(:type doc)} (keys mapping/v2->v3))
-    (convert-entity doc)
-    (conj '() (annotation/convert-annotation doc))))
+    (if (= user-id (:ownerUuid doc)) (convert-entity doc) [])
+    (if (= user-id (:userId doc)) (conj '() (annotation/convert-annotation doc)) [])))

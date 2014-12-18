@@ -4,8 +4,8 @@
             [cljs.nodejs :as nodejs]))
 
 (defn ^:export migrate
-  [doc]
-  (let [docs (core/convert (keywordize-keys (js->clj doc)))]
+  [doc user-id]
+  (let [docs (core/convert (keywordize-keys (js->clj doc)) user-id)]
     (clj->js (into [] (map (fn [doc] (clj->js (stringify-keys doc))) docs)))))
 
 (defn ^:export -main [] nil)

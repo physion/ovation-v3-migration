@@ -51,22 +51,8 @@ Cloudant({account:me, password:password}, function(er, cloudant) {
          .forEach(function(line){
 
              var db_name = line.toString();
-
-//             // only do dbs with "db-"
-//             var prefix = "db-";
-//             if (db_name.slice(0, prefix.length) != prefix) {
-//               //console.log("fail " + db_name);
-//               return;
-//             }
-
+             var user_id = db_name.substring(3, db_name.length - 3);
              var suffix = "-v3";
-//             // also skip dbs that end in -v3!
-//             if (db_name.indexOf(suffix, db_name.length - suffix.length) !== -1) {
-//               //console.log("suffix fail " + db_name);
-//               console.log("Destroying database: " + db_name);
-//               cloudant.db.destroy(db_name);
-//               return;
-//             }
 
              console.log("Migrating database: " + db_name);
 
@@ -112,10 +98,10 @@ Cloudant({account:me, password:password}, function(er, cloudant) {
                                 doc.doc.is_root = false;
                               }
 
-                              saveDocs(new_db, v3.migration.node.migrate(doc.doc));
+                              saveDocs(new_db, v3.migration.node.migrate(doc.doc, user_id));
                           });
                         } else {
-                          saveDocs(new_db, v3.migration.node.migrate(doc.doc));
+                          saveDocs(new_db, v3.migration.node.migrate(doc.doc, user_id));
                         }
                      }
                    }

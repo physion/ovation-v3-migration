@@ -94,9 +94,9 @@
                                                                  :links           {:_collaboration_roots (util/collab-roots d)}
                                                                  :user            (util/make-entity-uri (:ownerUuid d))
                                                                  :entity          (util/make-entity-uri (:parent d))
-                                                                 :api_version     "3"
+                                                                 :api_version     api-version
                                                                  :annotation_type "analysis_records"
-                                                                 :annotation      {:uri (str "ovation://entities/" (:parent d))}
+                                                                 :annotation      {:uri (util/make-entity-uri (:_id d))}
                                                                  }])
                                              :protocol protocol-link}
 
@@ -200,6 +200,8 @@
              "Project"        {:attributes  {;; v3 <- v2
                                              :purpose :purpose
                                              :name    :name
+                                             :start   :start
+                                             :start_zone :startZone
                                              }
                                :links       {;; Per link, list of added.
                                              :owner owner-link}

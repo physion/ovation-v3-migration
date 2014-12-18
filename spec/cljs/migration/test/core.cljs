@@ -104,20 +104,21 @@
               ;"type": "Annotation",
               ;"user": "ovation://entities/e7bf5920-4b3d-0132-5d38-22000a0b96d9",
               ;"entity": "ovation://entities/49754fa6-df69-452e-8808-24e7d12c5bf6"
-              (let [random-uuid-str (util/random-uuid)]
+              (let [random-uuid-str (util/random-uuid)
+                    doc (keywordize-keys (js->clj tag-annotation))
+                    owner (:userId doc)]
                 (with-redefs [util/random-uuid (fn [] random-uuid-str)]
-
-                             (should= (let [doc (keywordize-keys (js->clj tag-annotation))]
-                                        {
-                                         "_id"             (str "keywords_" random-uuid-str)
-                                         "annotation"      {"tag" (:tag doc)}
-                                         "links"           {"_collaboration_roots" (:experimentIds doc)}
-                                         "type"            "Annotation"
-                                         "annotation_type" "keywords"
-                                         "api_version"     "3"
-                                         "user"            (util/make-entity-uri (:userId doc))
-                                         "entity"          (util/make-entity-uri (:entityId doc))})
-                                      (first (m/convert (keywordize-keys (js->clj tag-annotation))))))))
+                             (should=
+                               {
+                                "_id"             (str "keywords_" random-uuid-str)
+                                "annotation"      {"tag" (:tag doc)}
+                                "links"           {"_collaboration_roots" (:experimentIds doc)}
+                                "type"            "Annotation"
+                                "annotation_type" "keywords"
+                                "api_version"     "3"
+                                "user"            (util/make-entity-uri (:userId doc))
+                                "entity"          (util/make-entity-uri (:entityId doc))}
+                               (first (m/convert (keywordize-keys (js->clj tag-annotation)) owner))))))
 
           (it "should convert property document"
               (let [doc (keywordize-keys (js->clj property-annotation))]
@@ -148,7 +149,7 @@
                                          "api_version"     "3"
                                          "user"            (util/make-entity-uri (:userId doc))
                                          "entity"          (util/make-entity-uri (:entityId doc))}
-                                        (first (m/convert (keywordize-keys (js->clj property-annotation)))))))))
+                                        (first (m/convert (keywordize-keys (js->clj property-annotation)) (:userId doc))))))))
 
           (it "should convert note annotation"
               (let [doc (keywordize-keys (js->clj note-annotation))
@@ -164,7 +165,7 @@
                                        "api_version"     "3"
                                        "user"            (util/make-entity-uri (:userId doc))
                                        "entity"          (util/make-entity-uri (:entityId doc))}
-                                      (first (m/convert (keywordize-keys (js->clj note-annotation))))))))
+                                      (first (m/convert (keywordize-keys (js->clj note-annotation)) (:userId doc)))))))
 
           (it "should convert timeline annotation"
               (let [doc (keywordize-keys (js->clj timeline-annotation))
@@ -182,7 +183,7 @@
                                        "api_version"     "3"
                                        "user"            (util/make-entity-uri (:userId doc))
                                        "entity"          (util/make-entity-uri (:entityId doc))}
-                                      (first (m/convert (keywordize-keys (js->clj timeline-annotation))))))))
+                                      (first (m/convert (keywordize-keys (js->clj timeline-annotation)) (:userId doc)))))))
           )
 
 

@@ -29,17 +29,22 @@
                                         :device_parameters   ((util/parameters :deviceParameters) doc)}
                           :links       {:_collaboration_roots (:experimentIds doc)}
                           }
-                         (first (m/convert doc)))))
+                         (first (m/convert doc (:ownerUuid doc))))))
+
+
+          (it "does not convert documents that aren't owned"
+              (let [doc (keywordize-keys epoch)]
+                (should (empty? (m/convert doc "other-id")))))
 
           (it "has owner relation"
               (let [doc (keywordize-keys epoch)]
-                (should (some #{{:_id       (str (:_id doc) "--owner-->" (:ownerUuid doc))
-                                 :type      "Relation"
+                (should (some #{{:_id         (str (:_id doc) "--owner-->" (:ownerUuid doc))
+                                 :type        "Relation"
                                  :api_version "3"
-                                 :rel       "owner"
-                                 :source_id (:_id doc)
-                                 :target_id (:ownerUuid doc)
-                                 :links     {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
+                                 :rel         "owner"
+                                 :source_id   (:_id doc)
+                                 :target_id   (:ownerUuid doc)
+                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc (:ownerUuid doc))))))
 
           (it "has experiment relation"
               (let [doc (keywordize-keys epoch)]
@@ -50,7 +55,7 @@
                                  :inverse_rel "epochs"
                                  :source_id   (:_id doc)
                                  :target_id   (:experiment doc)
-                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
+                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc (:ownerUuid doc))))))
 
 
           (it "has parent relation"
@@ -62,7 +67,7 @@
                                  :inverse_rel "epochs"
                                  :source_id   (:_id doc)
                                  :target_id   (:parent doc)
-                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
+                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc (:ownerUuid doc))))))
 
           (it "has not have protocol relation when protocol nil"
               (let [doc (keywordize-keys epoch)]
@@ -73,7 +78,7 @@
                                       :inverse_rel "procedures"
                                       :source_id   (:_id doc)
                                       :target_id   (:protocol doc)
-                                      :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc))))))
+                                      :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc (:ownerUuid doc)))))))
 
           (it "has not have protocol relation when protocol not nil"
               (let [doc (keywordize-keys (assoc epoch "protocol" "91047ab3-d4da-471d-9170-37f164a5a027"))]
@@ -84,30 +89,30 @@
                                  :inverse_rel "procedures"
                                  :source_id   (:_id doc)
                                  :target_id   (:protocol doc)
-                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
+                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc (:ownerUuid doc))))))
 
 
           (it "has input source relations when present"
               (let [doc (keywordize-keys epoch)]
-                (should (some #{{:_id       (str (:_id doc) "--input_sources>unit1-->" "00c66b67-1126-4cc0-af05-fd4ad188567f")
-                                 :type      "Relation"
+                (should (some #{{:_id         (str (:_id doc) "--input_sources>unit1-->" "00c66b67-1126-4cc0-af05-fd4ad188567f")
+                                 :type        "Relation"
                                  :api_version "3"
-                                 :rel       "input_sources"
-                                 :name      "unit1"
-                                 :source_id (:_id doc)
-                                 :target_id "00c66b67-1126-4cc0-af05-fd4ad188567f"
-                                 :links     {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
+                                 :rel         "input_sources"
+                                 :name        "unit1"
+                                 :source_id   (:_id doc)
+                                 :target_id   "00c66b67-1126-4cc0-af05-fd4ad188567f"
+                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc (:ownerUuid doc))))))
 
           (it "has output source relations when present"
               (let [doc (assoc (keywordize-keys epoch) :outputSources (:inputSources (keywordize-keys epoch)))]
-                (should (some #{{:_id       (str (:_id doc) "--output_sources>unit1-->" "00c66b67-1126-4cc0-af05-fd4ad188567f")
-                                 :type      "Relation"
+                (should (some #{{:_id         (str (:_id doc) "--output_sources>unit1-->" "00c66b67-1126-4cc0-af05-fd4ad188567f")
+                                 :type        "Relation"
                                  :api_version "3"
-                                 :rel       "output_sources"
-                                 :name      "unit1"
-                                 :source_id (:_id doc)
-                                 :target_id "00c66b67-1126-4cc0-af05-fd4ad188567f"
-                                 :links     {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
+                                 :rel         "output_sources"
+                                 :name        "unit1"
+                                 :source_id   (:_id doc)
+                                 :target_id   "00c66b67-1126-4cc0-af05-fd4ad188567f"
+                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc (:ownerUuid doc))))))
 
           )
 
@@ -121,7 +126,7 @@
                                  :inverse_rel "containing_entity"
                                  :source_id   (:_id doc)
                                  :target_id   (:data doc)
-                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
+                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc (:ownerUuid doc))))))
           )
 
 (describe "Analysis Record conversion"
@@ -135,7 +140,7 @@
                                  :inverse_rel "analyses"
                                  :source_id   (:_id doc)
                                  :target_id   "e5e28d4c-0eb5-4f96-a1a0-5d90feec66a2"
-                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
+                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc (:ownerUuid doc))))))
           (it "should have outputs relation"
               (let [doc (keywordize-keys analysis-record)]
                 (should (some #{{:_id         (str (:_id doc) "--outputs>analysis.mat-->" "939263e7-0fd9-438e-bcfb-7d7e83111fa8")
@@ -146,25 +151,24 @@
                                  :inverse_rel "containing_entity"
                                  :source_id   (:_id doc)
                                  :target_id   "939263e7-0fd9-438e-bcfb-7d7e83111fa8"
-                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc)))))
+                                 :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc (:ownerUuid doc))))))
 
           (it "should add annotation record for parent"
               (let [doc (keywordize-keys analysis-record)
                     random-uuid-str (util/random-uuid)
-                    docs (m/convert doc)]
+                    docs (m/convert doc (:ownerUuid doc))]
                 (with-redefs [util/random-uuid (fn [] random-uuid-str)]
                              (should-contain {:_id             (str "analysis_records_" random-uuid-str)
                                               :type            "Annotation"
-                                              :api_version     "3"
+                                              :api_version     3
                                               :user            (util/make-entity-uri (:ownerUuid doc))
                                               :entity          (util/make-entity-uri (:parent doc))
                                               :annotation_type "analysis_records"
                                               :annotation      {
-                                                                :uri (str "ovation://entities/" (:parent doc))
+                                                                :uri (util/make-entity-uri (:_id doc))
                                                                 }
-                                              :links           {:_collaboration_roots (util/collab-roots doc)}} docs))))
-
-          )
+                                              :links           {:_collaboration_roots (util/collab-roots doc)}}
+                                             docs)))))
 
 
 (describe "Trashed entities"
@@ -177,7 +181,7 @@
                                                "trashing_date" "2013-12-12T15:11:03.019-05:00",
                                                "trash_root"    "ovation://entities/39771d61-361e-497c-a55c-4cd3a83d1ac6"})]
 
-                (should= expected (:trash_info (first (m/convert trashed)))))))
+                (should= expected (:trash_info (first (m/convert trashed (:ownerUuid trashed))))))))
 
 (describe "Migrations"
           (it "has all entities"
