@@ -118,23 +118,22 @@ function convert_block(db, block_size, startkey_id, new_db, user_id) {
         params.startkey_id = startkey_id;
         params.startkey = startkey_id;
     }
-    
+
     var doc;
-    
+
     db.list(params, function(err, body) {
         if (!err) {
-            console.log(body.rows.length + " (of " + body.total_rows + " in " + block_size + ")");
             for(var i = 0; i < body.rows.length - 1; i++) {
                 doc = body.rows[i];
                 convert_doc(db, doc, new_db, user_id);
             }
-            
+
             if(body.rows.length <= block_size) {
                 doc = body.rows[body.rows.length-1];
                 convert_doc(db, doc, new_db, user_id);
             } else {
                 doc = body.rows[body.rows.length-1];
-                convert_block(db, block_size, doc.id, new_db, user_id);    
+                convert_block(db, block_size, doc.id, new_db, user_id);
             }
         } else {
             console.log("ERROR - listing DB documents: " + err);
