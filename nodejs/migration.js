@@ -1,4 +1,4 @@
-var  lazy = require("lazy");
+var lazy = require("lazy");
 var fs = require("fs");
 
 var v3 = require('../target/main/migration-node.js')
@@ -74,42 +74,71 @@ Cloudant({account:me, password:password}, function(er, cloudant) {
 
              var new_docs = [];
 
-             old_db.list({"include_docs": true}, function(err, body) {
-               if (!err) {
-                 body.rows.forEach(function(doc) {
-
-                   if(doc.id.indexOf("_design") != 0) {               //skip _design docs
-
-                     if(doc.doc.version === 3) {
-                       saveDocs(new_db, [doc.doc]);
-                     } else {
-
-                        // we have to treat Sources specially so that they get is_root
-                        if(doc.doc.type && doc.doc.type === "Source") {
-                          // see if this is a parent
-                          old_db.view('EntityBase', 'parent_sources', {"keys" : [doc.doc._id]}, function(err, body) {
-                              if(err) {
-                                console.log("ERROR - getting source parents " + doc.doc._id + " - " + err);
-                                process.exit(1);
-                              }
-
-                              if(body.rows.length == 0) {
-                                doc.doc.is_root = true;
-                              } else {
-                                doc.doc.is_root = false;
-                              }
-
-                              saveDocs(new_db, v3.migration.node.migrate(doc.doc, user_id));
-                          });
-                        } else {
-                          saveDocs(new_db, v3.migration.node.migrate(doc.doc, user_id));
-                        }
-                     }
-                   }
-                 });
-               }
-             });
+             var BLOCK_SIZE = 1000;
+             convert_block(old_db, BLOCK_SIZE, null, new_db, user_id);
          }
      );
   });
 });
+
+function convert_doc(db, doc, new_db, user_id) {
+    if(doc.id.indexOf("_design") != 0) {               //skip _design docs
+        if(doc.doc.version === 3) {
+            saveDocs(new_db, [doc.doc]);
+        } else {
+
+            // we have to treat Sources specially so that they get is_root
+            if(doc.doc.type && doc.doc.type === "Source") {
+                // see if this is a parent
+                db.view('EntityBase', 'parent_sources', {"keys" : [doc.doc._id]}, function(err, body) {
+                    if(err) {
+                        console.log("ERROR - getting source parents " + doc.doc._id + " - " + err);
+                        process.exit(1);
+                    }
+
+                    if(body.rows.length == 0) {
+                        doc.doc.is_root = true;
+                    } else {
+                        doc.doc.is_root = false;
+                    }
+
+                    saveDocs(new_db, v3.migration.node.migrate(doc.doc, user_id));
+                });
+            } else {
+                saveDocs(new_db, v3.migration.node.migrate(doc.doc, user_id));
+            }
+        }
+    }
+}
+
+function convert_block(db, block_size, startkey_id, new_db, user_id) {
+    console.log("Migrating block from " + startkey_id);
+    params = {"include_docs": true, "limit": block_size + 1};
+    if(startkey_id) {
+        params.startkey_id = startkey_id;
+        params.startkey = startkey_id;
+    }
+    
+    var doc;
+    
+    db.list(params, function(err, body) {
+        if (!err) {
+            console.log(body.rows.length + " (of " + body.total_rows + " in " + block_size + ")");
+            for(var i = 0; i < body.rows.length - 1; i++) {
+                doc = body.rows[i];
+                convert_doc(db, doc, new_db, user_id);
+            }
+            
+            if(body.rows.length <= block_size) {
+                doc = body.rows[body.rows.length-1];
+                convert_doc(db, doc, new_db, user_id);
+            } else {
+                doc = body.rows[body.rows.length-1];
+                convert_block(db, block_size, doc.id, new_db, user_id);    
+            }
+        } else {
+            console.log("ERROR - listing DB documents: " + err);
+            process.exit(1);
+        }
+    });
+}
