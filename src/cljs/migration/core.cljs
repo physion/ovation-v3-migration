@@ -64,5 +64,6 @@
   [doc user-id]
 
   (if (some #{(:type doc)} (keys mapping/v2->v3))
-    (if (= user-id (:ownerUuid doc)) (convert-entity doc) [])
+    (if (or (= user-id (:ownerUuid doc))
+            (= user-id (:_id doc))) (convert-entity doc) [])
     (if (= user-id (:userId doc)) (conj '() (annotation/convert-annotation doc)) [])))

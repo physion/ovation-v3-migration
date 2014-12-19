@@ -26,11 +26,14 @@
                                              }
                                :links       {;; Per link, list of added.
                                              :owner      owner-link
-                                             :experiment (fn [d] [{:source_id           (:_id d)
-                                                                   :target_id           (:experiment d)
-                                                                   :rel                 "experiment"
-                                                                   :inverse_rel         "epochs"
-                                                                   :collaboration_roots (util/collab-roots d)}])
+                                             :experiment (fn [d] (let [base {:source_id           (:_id d) ;; TODO don't have inverse if in an EpochGroup
+                                                                             :target_id           (:experiment d)
+                                                                             :rel                 "experiment"
+                                                                             :collaboration_roots (util/collab-roots d)}]
+                                                                   (if (= (:experiment d) (:parent d))
+                                                                     [(assoc base :inverse_rel "epochs")]
+                                                                     [base])
+                                                                   ))
                                              :parent     (fn [d] [{:source_id           (:_id d)
                                                                    :target_id           (:parent d)
                                                                    :rel                 "parent"
@@ -39,9 +42,9 @@
                                              :protocol   protocol-link}
 
                                :named_links {;; Per link, list of added. EXCLUDES _collaboration_roots
-                                             :input_sources  (util/named-targets :inputSources "input_sources")
+                                             :input_sources  (util/named-targets :inputSources "input_sources" "epochs")
 
-                                             :output_sources (util/named-targets :outputSources "output_sources")}}
+                                             :output_sources (util/named-targets :outputSources "output_sources" "producing_procedure")}}
 
              "Source"         {:attributes  {;; v3 <- v2
                                              :label      :label
@@ -198,9 +201,9 @@
                                :named_links {}}
 
              "Project"        {:attributes  {;; v3 <- v2
-                                             :purpose :purpose
-                                             :name    :name
-                                             :start   :start
+                                             :purpose    :purpose
+                                             :name       :name
+                                             :start      :start
                                              :start_zone :startZone
                                              }
                                :links       {;; Per link, list of added.

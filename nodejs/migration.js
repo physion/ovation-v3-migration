@@ -51,7 +51,8 @@ Cloudant({account:me, password:password}, function(er, cloudant) {
          .forEach(function(line){
 
              var db_name = line.toString();
-             var user_id = db_name.substring(3, db_name.length - 3);
+             var user_id = db_name.substring(3, db_name.length);
+             console.log("User ID: " + user_id)
              var suffix = "-v3";
 
              console.log("Migrating database: " + db_name);
