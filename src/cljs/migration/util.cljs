@@ -9,9 +9,11 @@
 (defn collab-roots
   "Experiment Ids or project Ids if no experiments"
   [doc]
-  (if-let [expts (:experimentIds doc)]
-    expts
-    (:projectIds doc)))
+  (let [expts (:experimentIds doc)
+        projects (:projectIds doc)]
+    (if (empty? expts)
+      projects
+      expts)))
 
 (defn make-entity-uri
   "Makes an ovation:// entity URI from a UUID string"
