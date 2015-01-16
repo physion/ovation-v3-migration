@@ -26,38 +26,43 @@
 
 (defn convert-entity
   [doc]
-  (let [migration (mapping/v2->v3 (:type doc))
-        base {:_id         (:_id doc)
-              ;:_rev        (:_rev doc)
-              :type        (:type doc)
-              :api_version mapping/api-version}
+  (if-let [migrations (mapping/v2->v3 (:type doc))]
+    (let [docs (map (fn [migration]
+                      (let [base {:_id         (if (nil? (:_id migration)) (:_id doc) ((:_id migration) doc)) ;; Allow migration to specify the _id
+                                  :type        (if (nil? (:type migration)) (:type doc) (:type migration))
+                                  :api_version mapping/api-version}
 
-        attributes {:attributes (into {} (map (fn [[v3 v2]]
-                                                [v3 (v2 doc)]) (:attributes migration)))}
-        roots (if (empty? (:experimentIds doc))
-                (:projectIds doc)
-                (:experimentIds doc))
+                            attributes {:attributes (into {} (map (fn [[v3 v2]]
+                                                                    [v3 (v2 doc)]) (:attributes migration)))}
+                            roots (if (empty? (:experimentIds doc))
+                                    (:projectIds doc)
+                                    (:experimentIds doc))
 
-        collab (if roots {:links {:_collaboration_roots roots}} {})
-        named_links (atom {})
-        named_link_docs (flatten (named-link-docs doc migration))
+                            collab (if roots {:links {:_collaboration_roots roots}} {})
+                            named_links (atom {})
+                            named_link_docs (flatten (named-link-docs doc migration))
 
-        trash (if-let [info (:trash_info doc)] {:trash_info {:trashing_user (str "ovation://entities/" (:trashing_user info))
-                                                             :trashing_date (:trashing_date info)
-                                                             :trash_root    (str "ovation://entities/" (:trash_root info))}} {})]
+                            trash (if-let [info (:trash_info doc)] {:trash_info {:trashing_user (str "ovation://entities/" (:trashing_user info))
+                                                                                 :trashing_date (:trashing_date info)
+                                                                                 :trash_root    (str "ovation://entities/" (:trash_root info))}} {})
+
+                            links (convert-links doc migration)]
 
 
-    ;; update named_links from docs
-    (doall (map (fn [link]
-                  (let [rel (:rel link)
-                        name (:name link)
-                        entity-id (:source_id link)
-                        uri (util/make-named-link-uri entity-id rel name)
-                        ]
-                    (when (= entity-id (:_id doc))
-                      (swap! named_links assoc-in [:named_links (keyword rel) name :uri] uri)))) named_link_docs))
+                        ;(when (= (:type base) "Revision") (doall (map #(print "\n" % "\n") links)))
+                        ;; update named_links from docs
+                        (doall (map (fn [link]
+                                      (let [rel (:rel link)
+                                            name (:name link)
+                                            entity-id (:source_id link)
+                                            uri (util/make-named-link-uri entity-id rel name)
+                                            ]
+                                        (when (= entity-id (:_id doc))
+                                          (swap! named_links assoc-in [:named_links (keyword rel) name :uri] uri)))) named_link_docs))
 
-    (flatten [(conj base attributes collab trash @named_links) (convert-links doc migration)])))
+                        (flatten [(conj base attributes collab trash @named_links) links]))) migrations)]
+
+      (flatten docs))))
 
 
 (defn convert

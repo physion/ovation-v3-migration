@@ -5,7 +5,7 @@
             [migration.util :as util]
             [clojure.walk :refer [keywordize-keys]]
             [migration.mapping :as mapping]
-            [migration.test.fixtures :refer [epoch measurement analysis-record]]))
+            [migration.test.fixtures :refer [epoch measurement analysis-record resource]]))
 
 
 
@@ -131,6 +131,57 @@
                                  :target_id   (:data doc)
                                  :links       {:_collaboration_roots (:experimentIds doc)}}} (m/convert doc (:ownerUuid doc))))))
           )
+
+(describe "Resource conversion"
+          (it "should create first revision"
+              (let [doc (keywordize-keys resource)
+                    actual (m/convert doc (:ownerUuid doc))
+                    expected [{:_id         "9e0d7c1a-2367-48c4-8c20-03dc0343cb0e",
+                               :type        "Resource",
+                               :api_version 3,
+                               :attributes  {:label "big.jpeg"},
+                               :links       {:_collaboration_roots ["12cfbb71-7438-4c67-a12a-12cc3ba76803"]}}
+                              {:type        "Relation",
+                               :api_version 3,
+                               :_id         "9e0d7c1a-2367-48c4-8c20-03dc0343cb0e--owner-->8dc20340-36cf-0132-f8c3-22000ae9209a",
+                               :rel         "owner",
+                               :target_id   "8dc20340-36cf-0132-f8c3-22000ae9209a",
+                               :source_id   "9e0d7c1a-2367-48c4-8c20-03dc0343cb0e",
+                               :links       {:_collaboration_roots ["12cfbb71-7438-4c67-a12a-12cc3ba76803"]}}
+
+                              {:_id         "9e0d7c1a-2367-48c4-8c20-03dc0343cb0e-rev1",
+                               :type        "Revision",
+                               :api_version 3,
+                               :attributes  {:content_type         "image/jpeg",
+                                             :data_url             "https://www.ovation.io/api/v1/resources/86989"
+                                             :file_name            "big.jpeg"
+                                             :supporting_file_urls {},
+                                             :head                 true,
+                                             :version              1
+                                             :resource             "9e0d7c1a-2367-48c4-8c20-03dc0343cb0e"},
+                               :links       {:_collaboration_roots ["12cfbb71-7438-4c67-a12a-12cc3ba76803"]}}
+
+                              {:type        "Relation",
+                               :api_version 3,
+                               :_id         "9e0d7c1a-2367-48c4-8c20-03dc0343cb0e-rev1--resource-->9e0d7c1a-2367-48c4-8c20-03dc0343cb0e",
+                               :rel         "resource",
+                               :target_id   "9e0d7c1a-2367-48c4-8c20-03dc0343cb0e",
+                               :source_id   "9e0d7c1a-2367-48c4-8c20-03dc0343cb0e-rev1",
+                               :inverse_rel "revisions"
+                               :links       {:_collaboration_roots ["12cfbb71-7438-4c67-a12a-12cc3ba76803"]}}
+
+                              {:type        "Relation",
+                               :api_version 3,
+                               :_id         "9e0d7c1a-2367-48c4-8c20-03dc0343cb0e-rev1--owner-->8dc20340-36cf-0132-f8c3-22000ae9209a",
+                               :rel         "owner",
+                               :target_id   "8dc20340-36cf-0132-f8c3-22000ae9209a",
+                               :source_id   "9e0d7c1a-2367-48c4-8c20-03dc0343cb0e-rev1",
+                               :links       {:_collaboration_roots ["12cfbb71-7438-4c67-a12a-12cc3ba76803"]}}]
+
+                    expected-map (into {} (map (fn [d] [(:_id d) d]) expected))]
+
+                (doall (map (fn [d]
+                              (should= d (expected-map (:_id d) ))) expected)))))
 
 (describe "Analysis Record conversion"
           (it "should have inputs relation"

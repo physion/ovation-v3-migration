@@ -146,3 +146,25 @@
                                             ],
                       "entity"             true
                       })
+
+(def resource {
+               "_id"              "9e0d7c1a-2367-48c4-8c20-03dc0343cb0e",
+               "_rev"             "2-a26df16a92a786f21b1ff199c45e6218",
+               "type"             "Resource",
+               "ownerUuid"        "8dc20340-36cf-0132-f8c3-22000ae9209a",
+               "writeGroupIds"    [],
+               "version"          "2.1.29",
+               "name"             "big.jpeg",
+               "dataUri"          "https://www.ovation.io/api/v1/resources/86989",
+               "mimeType"         "image/jpeg",
+               "experimentIds"    [
+                                   "12cfbb71-7438-4c67-a12a-12cc3ba76803"
+                                   ],
+               "projectIds"       [
+                                   "91bf1d5a-7b6e-461b-8fea-23f7d9586dec"
+                                   ],
+               "filename"         "big.jpeg",
+               "supportingFiles"  {},
+               "containingEntity" "04495c99-e1dc-44fe-a27c-f990162d4c84",
+               "entity"           true
+               })
