@@ -93,16 +93,18 @@ function convert_doc(db, doc, new_db, user_id) {
                 db.view('EntityBase', 'parent_sources', {"keys" : [doc.doc._id]}, function(err, body) {
                     if(err) {
                         console.log("ERROR - getting source parents " + doc.doc._id + " - " + err);
-                        process.exit(1);
-                    }
-
-                    if(body.rows.length == 0) {
-                        doc.doc.is_root = true;
+                        //process.exit(1);
                     } else {
-                        doc.doc.is_root = false;
+
+                        if(body.rows.length == 0) {
+                            doc.doc.is_root = true;
+                        } else {
+                            doc.doc.is_root = false;
+                        }
+
+                        saveDocs(new_db, v3.migration.node.migrate(doc.doc, user_id));
                     }
 
-                    saveDocs(new_db, v3.migration.node.migrate(doc.doc, user_id));
                 });
             } else {
                 saveDocs(new_db, v3.migration.node.migrate(doc.doc, user_id));
